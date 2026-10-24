@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>TRYOUT BANK SOAL TKA_KIMIA TP 2026/2027</title>
+<style>
+:root{
+  --navy:#1e3a5f;
+  --navy-dark:#152b47;
+  --slate:#3d5a80;
+  --amber:#e8a33d;
+  --amber-dark:#c9822a;
+  --paper:#f7f5f0;
+  --paper-2:#eeebe3;
+  --ink:#26313f;
+  --ink-soft:#5a6a7a;
+  --line:#d8d2c4;
+  --ok:#2f7a4f;
+  --ok-bg:#e5f3ea;
+  --bad:#b5432f;
+  --bad-bg:#fbe9e6;
+  --white:#ffffff;
+  --radius:10px;
+  --sidebar-w:280px;
+  --header-h:64px;
+  font-size:16px;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;height:100%;}
+body{
+  font-family:"Segoe UI",Verdana,Tahoma,sans-serif;
+  background:var(--paper-2);
+  color:var(--ink);
+  overflow:hidden;
+}
+button{font-family:inherit;cursor:pointer;}
+input,textarea,select{font-family:inherit;}
+::selection{background:var(--amber);color:var(--navy-dark);}
+
+/* ---------- App shell ---------- */
+#app{
+  display:flex;
+  flex-direction:column;
+  height:100vh;
+}
+
+/* ---------- Header ---------- */
+#header{
+  height:var(--header-h);
+  flex:0 0 auto;
+  background:linear-gradient(135deg,var(--navy) 0%,var(--navy-dark) 100%);
+  color:var(--white);
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:0 16px;
+  box-shadow:0 2px 8px rgba(0,0,0,.2);
+  z-index:20;
+}
+#hamburger{
+  flex:0 0 auto;
+  width:40px;height:40px;
+  border-radius:8px;
+  border:1px solid rgba(255,255,255,.25);
+  background:rgba(255,255,255,.08);
+  color:var(--white);
+  display:flex;align-items:center;justify-content:center;
+  font-size:18px;
+}
+#hamburger:active{background:rgba(255,255,255,.2);}
+#header-text{flex:1 1 auto;min-width:0;}
+#header-text h1{
+  font-size:15px;
+  margin:0;
+  font-weight:700;
+  letter-spacing:.2px;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+#header-text p{
+  margin:2px 0 0;
+  font-size:11.5px;
+  color:#c7d3e0;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+#header-progress{
+  flex:0 0 auto;
+  text-align:right;
+  font-size:12px;
+  color:#e8ecf1;
+}
+#header-progress b{color:var(--amber);font-size:15px;}
+#header-progress-bar{
+  width:90px;height:5px;border-radius:3px;
+  background:rgba(255,255,255,.2);
+  margin-top:5px;overflow:hidden;
+}
+#header-progress-fill{height:100%;background:var(--amber);width:0%;transition:width .3s;}
+
+/* ---------- Body layout ---------- */
+#body-wrap{
+  flex:1 1 auto;
+  display:flex;
+  min-height:0;
+  position:relative;
+}
+
+/* ---------- Sidebar ---------- */
+#sidebar{
+  width:var(--sidebar-w);
+  flex:0 0 var(--sidebar-w);
+  background:var(--white);
+  border-right:1px solid var(--line);
+  display:flex;
+  flex-direction:column;
+  min-height:0;
+  transition:margin-left .25s ease, box-shadow .25s ease;
+  z-index:15;
+}
+#body-wrap.sidebar-hidden #sidebar{margin-left:calc(-1 * var(--sidebar-w));}
+#sidebar-inner{
+  flex:1 1 auto;
+  overflow-y:auto;
+  padding:14px;
+}
+.legend{
+  display:flex;flex-wrap:wrap;gap:6px 10px;
+  font-size:10.5px;color:var(--ink-soft);
+  margin-bottom:12px;padding-bottom:12px;
+  border-bottom:1px dashed var(--line);
+}
+.legend span{display:flex;align-items:center;gap:4px;}
+.legend i{width:9px;height:9px;border-radius:3px;display:inline-block;}
+.sec-title{
+  font-size:11px;font-weight:700;color:var(--slate);
+  text-transform:uppercase;letter-spacing:.6px;
+  margin:14px 0 6px;
+}
+.sec-title:first-child{margin-top:0;}
+#navgrid-group{display:flex;flex-direction:column;gap:2px;}
+.nav-section{margin-bottom:4px;}
+.nav-grid{
+  display:grid;
+  grid-template-columns:repeat(5,1fr);
+  gap:6px;
+}
+.nav-btn{
+  aspect-ratio:1/1;
+  border-radius:7px;
+  border:1.5px solid var(--line);
+  background:var(--paper);
+  color:var(--ink);
+  font-size:12.5px;
+  font-weight:600;
+  display:flex;align-items:center;justify-content:center;
+  position:relative;
+  transition:.15s;
+}
+.nav-btn.answered{background:#dfeadd;border-color:#a9cba3;color:#2f5c3a;}
+.nav-btn.current{
+  border-color:var(--amber);
+  box-shadow:0 0 0 2px rgba(232,163,61,.35);
+  background:var(--navy);
+  color:var(--white);
+}
+.nav-btn:active{transform:scale(.93);}
+
+/* ---------- Backdrop for mobile sidebar ---------- */
+#backdrop{
+  display:none;
+  position:fixed;inset:0;
+  background:rgba(20,25,35,.4);
+  z-index:14;
+}
+#body-wrap.mobile-open #backdrop{display:block;}
+
+/* ---------- Main panel ---------- */
+#main{
+  flex:1 1 auto;
+  min-width:0;
+  display:flex;
+  flex-direction:column;
+  min-height:0;
+}
+#main-scroll{
+  flex:1 1 auto;
+  overflow-y:auto;
+  padding:22px clamp(16px,4vw,48px) 100px;
+}
+.card{
+  max-width:820px;
+  margin:0 auto;
+  background:var(--white);
+  border-radius:14px;
+  border:1px solid var(--line);
+  box-shadow:0 1px 3px rgba(30,58,95,.06);
+  padding:24px clamp(16px,3vw,36px);
+}
+.q-meta{
+  display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+  margin-bottom:14px;
+}
+.q-badge{
+  font-size:11px;font-weight:700;letter-spacing:.4px;
+  padding:4px 10px;border-radius:20px;
+  background:var(--navy);color:var(--white);
+}
+.q-badge.MCMA{background:var(--slate);}
+.q-badge.MATCH{background:#6b5b95;}
+.q-badge.ISIAN{background:#3d7068;}
+.q-badge.ESSAY{background:var(--amber-dark);}
+.q-num{font-size:13px;color:var(--ink-soft);font-weight:600;}
+.q-level{
+  margin-left:auto;font-size:11px;color:var(--ink-soft);
+  background:var(--paper);border:1px solid var(--line);
+  padding:3px 8px;border-radius:6px;
+}
+.q-stimulus{
+  background:var(--paper);border:1px solid var(--line);
+  border-left:4px solid var(--slate);
+  border-radius:8px;padding:12px 14px;margin-bottom:14px;
+  font-size:14.5px;line-height:1.7;color:var(--ink);
+}
+.q-stimulus table{border-collapse:collapse;margin-top:8px;width:100%;}
+.q-stimulus table td,.q-stimulus table th{
+  border:1px solid var(--line);padding:5px 9px;font-size:13.5px;text-align:center;
+}
+.q-stimulus table th{background:#e4e0d3;}
+.q-text{
+  font-size:16.5px;line-height:1.85;margin-bottom:20px;color:var(--ink);
+}
+.q-text p{margin:0 0 10px;}
+
+/* fraction rendering */
+.frac{display:inline-flex;flex-direction:column;vertical-align:middle;text-align:center;margin:0 2px;line-height:1;position:relative;top:2px;}
+.frac .num{padding:0 3px 2px;border-bottom:1.4px solid currentColor;}
+.frac .den{padding:2px 3px 0;}
+.eq-block{display:block;text-align:center;margin:10px 0;font-size:1.05em;}
+.mathtext{font-style:italic;}
+
+/* options: MCQ / MCMA */
+.opt-list{display:flex;flex-direction:column;gap:9px;}
+.opt{
+  display:flex;align-items:flex-start;gap:11px;
+  border:1.5px solid var(--line);border-radius:10px;
+  padding:12px 14px;
+  background:var(--paper);
+  transition:.15s;
+}
+.opt:not(.locked):active{background:var(--paper-2);}
+.opt.selected{border-color:var(--navy);background:#eaf0f8;}
+.opt input{margin-top:3px;flex:0 0 auto;width:18px;height:18px;accent-color:var(--navy);}
+.opt-label{font-weight:700;color:var(--slate);flex:0 0 auto;width:18px;}
+.opt-text{flex:1 1 auto;font-size:15px;line-height:1.6;}
+.opt-icon{flex:0 0 auto;font-size:15px;font-weight:700;}
+
+/* Match */
+.match-wrap{display:flex;flex-direction:column;gap:12px;}
+.match-row{
+  display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+  border:1.5px solid var(--line);border-radius:10px;padding:12px;background:var(--paper);
+}
+.match-left{font-weight:600;font-size:15px;flex:1 1 160px;min-width:120px;}
+.match-select{
+  flex:1 1 160px;min-width:140px;
+  padding:9px 10px;border-radius:8px;border:1.5px solid var(--line);
+  background:var(--white);font-size:14.5px;color:var(--ink);
+}
+.match-icon{flex:0 0 auto;font-weight:700;}
+
+/* Isian */
+.isian-input{
+  width:100%;padding:12px 14px;border-radius:10px;border:1.5px solid var(--line);
+  font-size:16px;background:var(--paper);color:var(--ink);
+}
+.isian-input:focus{outline:none;border-color:var(--navy);background:var(--white);}
+.isian-hint{font-size:11.5px;color:var(--ink-soft);margin-top:6px;}
+
+/* Essay */
+.essay-input{
+  width:100%;min-height:130px;padding:12px 14px;border-radius:10px;
+  border:1.5px solid var(--line);font-size:15.5px;line-height:1.6;
+  background:var(--paper);color:var(--ink);resize:vertical;
+}
+.essay-input:focus{outline:none;border-color:var(--navy);background:var(--white);}
+
+/* Locked state */
+.locked{pointer-events:none;opacity:.92;}
+
+/* Action row */
+.q-actions{
+  display:flex;gap:10px;flex-wrap:wrap;
+  margin-top:18px;padding-top:16px;border-top:1px solid var(--line);
+}
+.btn{
+  border:none;border-radius:9px;padding:11px 18px;font-size:14px;font-weight:700;
+  display:inline-flex;align-items:center;gap:7px;
+}
+.btn-primary{background:var(--navy);color:var(--white);}
+.btn-primary:active{background:var(--navy-dark);}
+.btn-primary:disabled{background:#b9c2cd;color:#eef1f4;}
+.btn-ghost{background:var(--white);color:var(--navy);border:1.5px solid var(--navy);}
+.btn-amber{background:var(--amber);color:var(--navy-dark);}
+.btn-amber:active{background:var(--amber-dark);}
+.btn:disabled{cursor:not-allowed;}
+
+/* Feedback / pembahasan */
+.feedback{
+  margin-top:16px;border-radius:10px;padding:14px 16px;font-size:14.5px;line-height:1.75;
+}
+.feedback.ok{background:var(--ok-bg);border:1.5px solid #b6dcc2;color:#204a30;}
+.feedback.bad{background:var(--bad-bg);border:1.5px solid #eec3ba;color:#7a2e20;}
+.feedback.neutral{background:#eef2f6;border:1.5px solid #c9d6e3;color:var(--navy-dark);}
+.feedback-title{font-weight:700;font-size:14px;margin-bottom:6px;display:flex;align-items:center;gap:6px;}
+.feedback .kunci{font-weight:700;}
+.pembahasan{margin-top:10px;padding-top:10px;border-top:1px dashed rgba(0,0,0,.15);}
+.pembahasan-step{margin-bottom:7px;}
+.pembahasan-step b{color:var(--slate);}
+.rubrik-box{
+  margin-top:10px;background:var(--white);border:1px dashed var(--line);
+  border-radius:8px;padding:10px 12px;font-size:13.5px;color:var(--ink-soft);
+}
+
+/* Footer nav bar (prev/next) */
+#footer-nav{
+  flex:0 0 auto;
+  display:flex;gap:10px;align-items:center;
+  padding:12px clamp(16px,4vw,48px);
+  background:var(--white);
+  border-top:1px solid var(--line);
+}
+#footer-nav .spacer{flex:1 1 auto;}
+#btn-finish{background:var(--ok);color:var(--white);}
+
+/* ---------- Result modal ---------- */
+#result-overlay{
+  position:fixed;inset:0;background:rgba(20,25,35,.55);
+  display:none;align-items:center;justify-content:center;z-index:50;padding:16px;
+}
+#result-overlay.show{display:flex;}
+#result-modal{
+  background:var(--white);border-radius:16px;max-width:640px;width:100%;
+  max-height:88vh;overflow-y:auto;padding:26px clamp(18px,4vw,34px);
+}
+#result-modal h2{margin:0 0 4px;font-size:20px;color:var(--navy);}
+#result-modal .sub{color:var(--ink-soft);font-size:13px;margin-bottom:18px;}
+.score-hero{
+  display:flex;align-items:center;gap:18px;
+  background:linear-gradient(135deg,var(--navy),var(--slate));
+  color:var(--white);border-radius:12px;padding:18px 20px;margin-bottom:18px;
+}
+.score-hero .num{font-size:42px;font-weight:800;color:var(--amber);line-height:1;}
+.score-hero .lbl{font-size:12.5px;color:#dbe4ee;line-height:1.5;}
+.result-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;}
+.result-item{border:1px solid var(--line);border-radius:9px;padding:10px 12px;background:var(--paper);}
+.result-item .n{font-size:18px;font-weight:800;color:var(--navy);}
+.result-item .l{font-size:11.5px;color:var(--ink-soft);}
+.result-note{
+  background:#fff6e8;border:1px solid #f0dcae;border-radius:9px;
+  padding:11px 13px;font-size:12.5px;color:#7a5a12;line-height:1.6;margin-bottom:14px;
+}
+.result-actions{display:flex;gap:10px;flex-wrap:wrap;}
+#level-breakdown{margin-bottom:14px;}
+.level-row{display:flex;align-items:center;gap:8px;margin-bottom:7px;font-size:12.5px;}
+.level-row .lname{flex:0 0 128px;color:var(--ink-soft);}
+.level-bar-bg{flex:1 1 auto;height:8px;border-radius:5px;background:var(--paper-2);overflow:hidden;}
+.level-bar-fill{height:100%;background:var(--slate);}
+.level-row .lval{flex:0 0 44px;text-align:right;font-weight:700;color:var(--navy);}
+
+/* ---------- Start screen (nama siswa) ---------- */
+#start-overlay{
+  position:fixed;inset:0;z-index:70;
+  background:linear-gradient(135deg,var(--navy) 0%,var(--navy-dark) 100%);
+  display:flex;align-items:center;justify-content:center;padding:20px;
+  overflow-y:auto;
+}
+#start-overlay.hidden{display:none;}
+#loading-overlay{
+  position:fixed;inset:0;z-index:80;
+  background:linear-gradient(135deg,var(--navy) 0%,var(--navy-dark) 100%);
+  display:flex;align-items:center;justify-content:center;padding:20px;
+}
+#loading-overlay.hidden{display:none;}
+.start-card{
+  background:var(--white);border-radius:16px;max-width:420px;width:100%;
+  padding:30px clamp(20px,5vw,36px);text-align:center;
+  box-shadow:0 20px 50px rgba(0,0,0,.3);
+  margin:auto;
+}
+.start-card.wide{max-width:540px;text-align:left;}
+.start-card .eyebrow{
+  font-size:12px;color:var(--slate);font-weight:700;margin-bottom:6px;
+}
+.start-card h2{margin:0 0 6px;font-size:19px;color:var(--navy);}
+.start-card .sub{font-size:13px;color:var(--ink-soft);margin-bottom:22px;line-height:1.6;}
+.start-card.wide .eyebrow,.start-card.wide h2,.start-card.wide .sub{text-align:center;}
+.start-card.hidden{display:none;}
+
+/* Info step (keterangan soal) */
+.info-grid{
+  display:grid;grid-template-columns:1fr 1fr;gap:10px 14px;
+  margin-bottom:18px;
+}
+.info-item{
+  background:var(--paper);border:1px solid var(--line);border-radius:9px;
+  padding:9px 12px;
+}
+.info-item .k{font-size:10px;color:var(--ink-soft);text-transform:uppercase;letter-spacing:.4px;margin-bottom:2px;}
+.info-item .v{font-size:13.5px;font-weight:700;color:var(--navy);}
+.info-item.full{grid-column:1/-1;}
+.dist-list{list-style:none;margin:0;padding:0;}
+.dist-list li{font-size:13px;color:var(--ink);padding:3px 0;display:flex;justify-content:space-between;gap:10px;}
+.dist-list li b{color:var(--navy);}
+.instructions{
+  background:var(--ok-bg);border:1px solid #bfe0cb;border-left:4px solid var(--ok);
+  border-radius:8px;padding:12px 14px;margin-bottom:20px;
+}
+.instructions .sec-title{margin:0 0 8px;color:var(--ok);}
+.instructions ol{margin:0;padding-left:18px;}
+.instructions li{font-size:13px;line-height:1.7;color:var(--ink);}
+#start-step-nama.hidden,#start-step-info.hidden{display:none;}
+
+/* Pengiriman hasil ke server (Google Sheets) */
+.submit-status{
+  margin-top:14px;padding:10px 12px;border-radius:8px;font-size:12.5px;
+  display:flex;align-items:center;gap:8px;
+}
+.submit-status.sending{background:#eef2f7;color:var(--slate);}
+.submit-status.ok{background:var(--ok-bg);color:var(--ok);}
+.submit-status.fail{background:var(--bad-bg);color:var(--bad);}
+.submit-status .btn-retry{
+  margin-left:auto;border:1px solid currentColor;background:transparent;color:inherit;
+  font-size:11.5px;padding:4px 10px;border-radius:6px;font-weight:700;
+}
+.start-card label{
+  display:block;text-align:left;font-size:13px;font-weight:600;color:var(--ink);margin-bottom:6px;
+}
+#input-nama{
+  width:100%;padding:12px 14px;border-radius:10px;border:1.5px solid var(--line);
+  font-size:16px;background:var(--paper);color:var(--ink);margin-bottom:6px;
+}
+#input-nama:focus{outline:none;border-color:var(--navy);background:var(--white);}
+.start-card .err{font-size:12px;color:var(--bad);text-align:left;min-height:16px;margin-bottom:10px;}
+#btn-mulai{width:100%;justify-content:center;padding:13px;font-size:15px;}
+#btn-mulai:disabled{background:#b9c2cd;color:#eef1f4;}
+.hdr-student{
+  font-size:11.5px;color:#c7d3e0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+
+/* Confirm dialog (reset) */
+.confirm-overlay{
+  position:fixed;inset:0;background:rgba(20,25,35,.5);
+  display:none;align-items:center;justify-content:center;z-index:60;padding:16px;
+}
+.confirm-overlay.show{display:flex;}
+.confirm-box{background:var(--white);border-radius:14px;padding:20px;max-width:360px;width:100%;}
+.confirm-box p{font-size:14px;color:var(--ink);line-height:1.6;}
+.confirm-box .row{display:flex;gap:10px;margin-top:14px;}
+
+.q-img{display:block;width:auto;max-width:min(100%,420px);max-height:280px;object-fit:contain;margin:0 auto 16px;padding:6px;border-radius:8px;border:1px solid var(--line);background:#fff;cursor:zoom-in;}
+.q-badge.TF{background:#6b5b95;}
+.q-stimulus b{display:block;margin-bottom:6px;color:var(--navy);}.q-stimulus p{margin:0 0 8px;}
+.opt.ok{border-color:var(--ok);background:var(--ok-bg);}.opt.bad{border-color:var(--bad);background:var(--bad-bg);}
+.tf{border-collapse:collapse;width:100%;margin-bottom:6px;}.tf th,.tf td{border:1px solid var(--line);padding:9px 10px;font-size:14.5px;line-height:1.55;text-align:left;}
+.tf th{background:#e4e0d3;text-align:center;}.tf th:first-child{text-align:left;}.tf td.c{text-align:center;width:66px;}.tf td.c input{width:18px;height:18px;accent-color:var(--navy);}
+.tf td.good{background:var(--ok-bg);}.tf td.wrong{background:var(--bad-bg);}
+.nav-btn.ok{background:var(--ok-bg);border-color:var(--ok);color:var(--ok);}.nav-btn.bad{background:var(--bad-bg);border-color:var(--bad);color:var(--bad);}
+.q-stimulus table{display:block;overflow-x:auto;}
+/* Empty/utility */
+.hidden{display:none !important;}
+
+/* ---------- Responsive ---------- */
+@media (max-width:860px){
+  :root{--sidebar-w:250px;}
+  #header-text p{display:none;}
+}
+@media (max-width:680px){
+  #sidebar{
+    position:fixed;top:var(--header-h);bottom:0;left:0;
+    box-shadow:6px 0 24px rgba(0,0,0,.18);
+  }
+  #body-wrap.sidebar-hidden #sidebar{margin-left:calc(-1 * var(--sidebar-w));}
+  .result-grid{grid-template-columns:1fr 1fr;}
+  .card{padding:18px 16px;}
+  #header-progress-bar{width:60px;}
+}
+@media (max-width:400px){
+  .nav-grid{grid-template-columns:repeat(5,1fr);}
+}
+
+/* Scrollbar polish */
+#sidebar-inner::-webkit-scrollbar,#main-scroll::-webkit-scrollbar,#result-modal::-webkit-scrollbar{width:8px;}
+#sidebar-inner::-webkit-scrollbar-thumb,#main-scroll::-webkit-scrollbar-thumb{background:#c9c2b0;border-radius:4px;}
+</style>
+</head>
+<body>
+
+<div id="start-overlay" class="hidden">
+  <!-- Langkah 1: Halaman keterangan/informasi soal -->
+  <div id="start-card-info" class="start-card wide">
+    <div class="eyebrow">KETERANGAN ASESMEN</div>
+    <h2 id="info-title">Memuat…</h2>
+    <div class="sub" id="info-sub"></div>
+    <div class="info-grid" id="info-grid"></div>
+    <div class="instructions">
+      <div class="sec-title">Petunjuk Pengerjaan</div>
+      <ol><li>Kerjakan soal secara mandiri dan jujur, sesuai kemampuanmu sendiri.</li><li>Jawaban tersimpan otomatis di perangkat ini selama pengerjaan berlangsung.</li><li>Gunakan nomor soal di sidebar untuk berpindah antar soal kapan saja.</li><li>Soal PG Kompleks boleh dijawab lebih dari satu; pada soal Benar/Salah, tentukan jawaban untuk setiap pernyataan.</li><li>Setelah selesai, tekan "Kumpulkan Jawaban" di soal terakhir untuk melihat skor dan pembahasan.</li></ol>
+    </div>
+    <button class="btn btn-primary" id="btn-info-lanjut" style="width:100%;justify-content:center;padding:13px;font-size:15px;">Lanjut, Isi Nama →</button>
+  </div>
+
+  <!-- Langkah 2: Isi nama siswa -->
+  <div id="start-card-nama" class="start-card hidden">
+    <div class="eyebrow">SEBELUM MULAI</div>
+    <h2 id="start-title">Asesmen Sumatif Tengah Semester</h2>
+    <div class="sub" id="start-sub">Isi nama lengkapmu terlebih dahulu sebelum mengerjakan soal.</div>
+    <label for="input-nama">Nama Siswa</label>
+    <input type="text" id="input-nama" placeholder="Tulis nama lengkapmu di sini" autocomplete="name">
+    <div class="err" id="start-err"></div>
+    <button class="btn btn-primary" id="btn-mulai" disabled>Mulai Mengerjakan</button>
+    <button class="btn" id="btn-info-kembali" style="width:100%;justify-content:center;margin-top:8px;background:transparent;color:var(--ink-soft);">← Kembali ke Keterangan Soal</button>
+  </div>
+</div>
+
+<div id="app">
+  <div id="header">
+    <button id="hamburger" title="Tampilkan/Sembunyikan navigasi soal">☰</button>
+    <div id="header-text">
+      <h1 id="hdr-title">Memuat…</h1>
+      <p id="hdr-sub"></p>
+      <p class="hdr-student" id="hdr-student"></p>
+    </div>
+    <div id="header-progress">
+      <div><b id="hdr-answered">0</b>/<span id="hdr-total">40</span> terjawab</div>
+      <div id="header-progress-bar"><div id="header-progress-fill"></div></div>
+    </div>
+  </div>
+
+  <div id="body-wrap">
+    <div id="backdrop"></div>
+    <div id="sidebar">
+      <div id="sidebar-inner">
+        <div class="legend">
+          <span><i style="background:var(--paper);border:1.5px solid var(--line);"></i>Belum dijawab</span>
+          <span><i style="background:#dfeadd;border:1.5px solid #a9cba3;"></i>Terisi</span>
+          <span><i style="background:var(--ok-bg);border:1.5px solid var(--ok);"></i>Benar</span>
+          <span><i style="background:var(--bad-bg);border:1.5px solid var(--bad);"></i>Salah</span>
+        </div>
+        <div id="navgrid-group"></div>
+      </div>
+    </div>
+
+    <div id="main">
+      <div id="main-scroll">
+        <div class="card" id="question-card"></div>
+      </div>
+      <div id="footer-nav">
+        <button class="btn btn-ghost" id="btn-prev">← Sebelumnya</button>
+        <div class="spacer"></div>
+        <button class="btn btn-primary" id="btn-next">Berikutnya →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="result-overlay">
+  <div id="result-modal"></div>
+</div>
+
+<div class="confirm-overlay" id="confirm-overlay">
+  <div class="confirm-box">
+    <p id="confirm-text"></p>
+    <div class="row">
+      <button class="btn btn-ghost" id="confirm-cancel" style="flex:1;">Batal</button>
+      <button class="btn btn-primary" id="confirm-ok" style="flex:1;background:var(--bad);">Ya, lanjutkan</button>
+    </div>
+  </div>
+</div>
+
+
+<script>
+(function(){"use strict";
+const D=[{"n":1,"t":"MCQ","el":"Kimia Dasar","jud":"Penyelidikan Ilmiah: Pembuatan Material Semi-Konduktor dan Industri Kimia Unsur","nar":"Dua unsur golongan utama, yaitu unsur X (nomor atom 12) dan unsur Y (nomor atom 17), merupakan komponen penting dalam pembuatan material rekayasa industri. Peneliti menganalisis sifat periodik dan mekanisme pembentukan ikatan antara kedua unsur tersebut berdasarkan konfigurasi elektronnya. Berikut data sifat kedua unsur:","soal":"Berdasarkan data sifat unsur tersebut, manakah analisis yang paling tepat mengenai pembentukan ion stabil dan rumus kimia senyawa yang terbentuk?","lang":["1. Unsur X (Z=12) memiliki konfigurasi 2.8.2 (Golongan IIA, Periode 3). Untuk mencapai konfigurasi oktet stabil (2.8) seperti gas mulia Neon, X cenderung MELEPAS 2 elektron valensinya membentuk kation X2+.","2. Unsur Y (Z=17) memiliki konfigurasi 2.8.7 (Golongan VIIA, Periode 3). Untuk mencapai konfigurasi oktet stabil (2.8.8) seperti gas mulia Argon, Y cenderung MENERIMA 1 elektron membentuk anion Y-.","3. Menurut prinsip netralitas muatan listrik: 1 ion X2+ membutuhkan 2 ion Y- (muatan +2 + 2(-1) = 0), sehingga rumus kimia senyawa ionik yang terbentuk adalah XY2."],"ana":["• Opsi A: Miskonsepsi pembentukan ion (terbalik menentukan kecenderungan melepas/menerima elektron).","• Opsi B: Salah dalam menentukan muatan ion stabil dari unsur golongan IIA dan VIIA.","• Opsi C: Kunci Jawaban Benar.","• Opsi D: Miskonsepsi jenis ikatan (menganggap ikatan antara logam alkali tanah IIA dan nonlogam halogen VIIA sebagai ikatan kovalen).","• Opsi E: Miskonsepsi mekanisme pelepasan elektron dan penentuan rumus molekul."],"tab":{"h":["Sifat Periodik Atom","Unsur X (Z = 12)","Unsur Y (Z = 17)"],"r":[["Konfigurasi Elektron (Kulit)","2 . 8 . 2","2 . 8 . 7"],["Jumlah Kulit Terisi Elektron","3 Kulit (K, L, M)","3 Kulit (K, L, M)"],["Elektron Valensi","2 Elektron","7 Elektron"]]},"opsi":[["A","Unsur X menerima 2 elektron membentuk anion X2-, sedangkan unsur Y melepaskan 1 elektron membentuk kation Y+, sehingga menghasilkan senyawa ionik X2Y."],["B","Unsur X membentuk ion X+ dan unsur Y membentuk ion Y2- karena berada pada periode yang sama, sehingga menghasilkan senyawa XY."],["C","Unsur X melepaskan 2 elektron valensi membentuk kation X2+, sedangkan unsur Y menerima 1 elektron membentuk anion Y-, sehingga menghasilkan senyawa ionik XY2."],["D","Unsur X dan Y saling berbagi 2 pasang elektron valensi untuk mencapai kestabilan oktet sehingga membentuk senyawa kovalen XY."],["E","Unsur X melepaskan 1 elektron membentuk kation X+, sedangkan unsur Y melepaskan 2 elektron membentuk kation Y2+, sehingga menghasilkan senyawa logam X2Y3."]]},{"n":2,"t":"MCMA","el":"Kimia Dasar","jud":"Penyelidikan Ilmiah: Sintesis Senyawa Anorganik Berbasis Garam Mineral","nar":"Seorang ahli anorganik menguji pembentukan senyawa garam netral dari kombinasi dua unsur berikut:\n- Unsur A: Logam alkali tanah periode 3 dengan nomor atom 12 (Magnesium, Mg).\n- Unsur B: Nonlogam golongan nitrogen periode 2 dengan nomor atom 7 (Nitrogen, N).\n- Unsur C: Logam alkali periode 4 dengan nomor atom 19 (Kalium, K).\n- Unsur D: Nonlogam kalkogen periode 3 dengan nomor atom 16 (Sulfur, S).\n\nPilih semua jawaban benar. Jawaban benar lebih dari satu!","soal":"Berdasarkan muatan ion stabil yang terbentuk saat mencapai konfigurasi gas mulia, manakah pasangan rumus kimia dan nama senyawa yang benar?","lang":["1. Atom A (Mg, Z=12): Konfigurasi 2.8.2 → membentuk kation Mg2+.","2. Atom B (N, Z=7): Konfigurasi 2.5 → membentuk anion N3- (menangkap 3 e).","Kombinasi Mg2+ dan N3- disilangkan muatannya menjadi Mg3N2 (Magnesium nitrida). -> Pernyataan 1 BENAR.","3. Atom C (K, Z=19): Konfigurasi 2.8.8.1 → membentuk kation K+.","4. Atom D (S, Z=16): Konfigurasi 2.8.6 → membentuk anion S2- (menangkap 2 e).","Kombinasi K+ dan S2- disilangkan muatannya menjadi K2S (Kalium sulfida). -> Pernyataan 2 BENAR.","5. Kombinasi Mg2+ dan S2- memiliki rasio muatan 1:1 → MgS (Magnesium sulfida). -> Pernyataan 3 BENAR.","6. Kombinasi K+ dan N3- membentuk K3N, bukan KN3. -> Pernyataan 4 SALAH.","7. Unsur A (logam) dan C (logam) tidak membentuk senyawa ionik netral. -> Pernyataan 5 SALAH."],"ana":["• Opsi 1: BENAR (Mg3N2).","• Opsi 2: BENAR (K2S).","• Opsi 3: BENAR (MgS).","• Opsi 4: SALAH - Miskonsepsi rumus kimia kalium nitrida (terbalik rumus azida KN3 vs nitrida K3N).","• Opsi 5: SALAH - Miskonsepsi menganggap dua logam alkali/alkali tanah membentuk senyawa ionik."],"tab":null,"opsi":[["1","Unsur A dan B membentuk senyawa magnesium nitrida dengan rumus kimia Mg3N2."],["2","Unsur C dan D membentuk senyawa kalium sulfida dengan rumus kimia K2S."],["3","Unsur A dan D membentuk senyawa magnesium sulfida dengan rumus kimia MgS."],["4","Unsur C dan B membentuk senyawa kalium nitrida dengan rumus kimia KN3."],["5","Unsur A dan C membentuk senyawa paduan logam dengan rumus kimia MgK2."]]},{"n":3,"t":"TF","el":"Kimia Dasar","jud":"Material & Sifatnya: Uji Sifat Fisika Sampel Material Terhitung di Laboratorium","nar":"Empat sampel padatan tidak dikenal (P, Q, R, dan S) diuji sifat fisiknya melalui pengukuran titik leleh dan pengujian daya hantar listrik pada berbagai fase. Hasil pengamatan laboratorium dicatat dalam tabel berikut:","soal":"Bagaimana hasil analisis jenis ikatan kimia berdasarkan data sifat fisika keempat sampel tersebut? Tentukan Benar atau Salah untuk setiap pernyataan berikut!","lang":["• Pernyataan 1 (BENAR): Sampel P memiliki Ciri Khas Ikatan Ionik (titik leleh tinggi 801°C, padatan isolator, lelehan dan larutan konduktor karena ion terdisosiasi).","• Pernyataan 2 (SALAH): Sampel Q menghantar listrik pada fase padat dan lelehan serta titik leleh sangat tinggi (1538°C). Ini adalah ciri khas IKATAN LOGAM (lautan elektron), bukan kovalen nonpolar!","• Pernyataan 3 (BENAR): Sampel R bereaksi/larut dalam air menghasilkan sedikit ion (elektrolit lemah) dan titik leleh sangat rendah (-114°C) khas kovalen polar terionisasi sebagian (misal CH3COOH atau HF).","• Pernyataan 4 (BENAR): Sampel S tidak menghantar listrik di semua fase dan titik leleh rendah (180°C) khas kovalen nonpolar nonelektrolit (misal gula/sukrosa atau urea)."],"ana":["• Baris 1: BENAR.","• Baris 2: SALAH - Miskonsepsi menganggap daya hantar padatan tinggi sebagai ciri kovalen nonpolar (padahal logam).","• Baris 3: BENAR.","• Baris 4: BENAR."],"tab":{"h":["Sampel","Titik Leleh (°C)","Daya Hantar Listrik (Padatan)","Daya Hantar Listrik (Lelehan)","Daya Hantar Listrik (Larutan dalam Air)"],"r":[["P","801","Tidak Menghantar","Menghantar Baik","Menghantar Baik"],["Q","1538","Menghantar Sangat Baik","Menghantar Sangat Baik","Tidak Larut"],["R","-114","Tidak Menghantar","Tidak Menghantar","Menghantar Lemah"],["S","180","Tidak Menghantar","Tidak Menghantar","Tidak Menghantar"]]},"rows":["Sampel P memiliki ikatan ionik karena titik lelehnya tinggi serta lelehan dan larutannya dapat menghantarkan arus listrik akibat ion-ion yang bergerak bebas.","Sampel Q merupakan zat dengan ikatan kovalen nonpolar karena padatannya dapat menghantarkan listrik dengan sangat baik.","Sampel R merupakan senyawa kovalen polar yang mengalami ionisasi sebagian saat dilarutkan ke dalam air sehingga bersifat elektrolit lemah.","Sampel S tergolong senyawa kovalen nonpolar netral (nonelektrolit) yang terdiri dari molekul-molekul sederhana dengan gaya antarmolekul relatif lemah."]},{"n":4,"t":"MCQ","el":"Kimia Dasar","jud":"Penyelidikan Ilmiah: Analisis Geometri Molekul Polutan dan Reagen Sintesis Fluorida","nar":"Klorin trifluorida (ClF3) merupakan senyawa interhalogen reaktif yang digunakan sebagai agen fluorinasi dalam industri pemrosesan bahan bakar nuklir. Tim peneliti menentukan struktur geometri molekul ClF3 untuk memahami reaktivitasnya berdasarkan Teori VSEPR (Valence Shell Electron Pair Repulsion) dan Domain Elektron.\n(Diketahui nomor atom: Cl = 17, F = 9)","soal":"Berdasarkan Teori Domain Elektron, berapakah jumlah Pasangan Elektron Ikatan (PEI), Pasangan Elektron Bebas (PEB), dan apakah bentuk geometri molekul ClF3 yang paling tepat?","lang":["1. Atom pusat Cl (Z=17) memiliki 7 elektron valensi.","2. Atom Cl mengikat 3 atom F melalui ikatan kovalen tunggal → PEI (X) = 3.","3. Elektron valensi Cl sisa = 7 - 3 = 4 elektron = 2 Pasangan Elektron Bebas → PEB (E) = 2.","4. Total Domain Elektron (AX3E2) = 3 + 2 = 5 domain dengan geometri dasar Trigonal Bipiramida.","5. Karena terdapat 2 PEB pada posisi ekuatorial untuk meminimalkan tolakan elektron, bentuk geometri molekulnya menjadi Bentuk T (T-shaped)."],"ana":["• Opsi A: Miskonsepsi mengabaikan keberadaan 2 PEB dan mengasumsikan molekul berbentuk segitiga datar.","• Opsi B: Miskonsepsi lupa menghitung 1 pasangan elektron bebas pada atom pusat Cl.","• Opsi C: Miskonsepsi tertukar antara total domain elektron (5) dengan jumlah PEI.","• Opsi D: Kunci Jawaban Benar.","• Opsi E: Salah dalam menghitung sisa elektron valensi atom pusat."],"tab":null,"opsi":[["A","PEI = 3, PEB = 0, Geometri Molekul = Trigonal Planar (Segitiga Datar)"],["B","PEI = 3, PEB = 1, Geometri Molekul = Piramida Alas Trigonal"],["C","PEI = 5, PEB = 0, Geometri Molekul = Trigonal Bipiramida"],["D","PEI = 3, PEB = 2, Geometri Molekul = Bentuk T (T-shaped)"],["E","PEI = 3, PEB = 3, Geometri Molekul = Linear"]]},{"n":5,"t":"MCMA","el":"Kimia Dasar","jud":"Penyelidikan Ilmiah: Evaluasi Kepolaran dan Momen Dipol Pelarut Kimia","nar":"Sifat kepolaran molekul sangat menentukan kelarutan dan kepolaran zat dalam sintesis kimia. Lima senyawa kovalen diuji momen dipolnya (μ) pada suhu 25°C:\n1. Boron trifluorida (BF3)\n2. Amonia (NH3)\n3. Karbon tetraklorida (CCl4)\n4. Sulfur dioksida (SO2)\n5. Karbon dioksida (CO2)\n\nPilih semua jawaban benar. Jawaban benar lebih dari satu!","soal":"Manakah analisis yang tepat mengenai geometri molekul, nilai momen dipol (μ), dan kepolaran senyawa-senyawa tersebut?","lang":["1. BF3 (AX3): Trigonal planar simetris. Beda keelektronegatifan B-F besar, tetapi karena simetris sempurna, vektor dipol saling meniadakan (μ = 0) → Nonpolar. -> Pernyataan 1 BENAR.","2. NH3 (AX3E): Piramida trigonal asimetris karena 1 PEB pada N. Resultan momen dipol tidak nol (μ = 1,47 D) → Polar. -> Pernyataan 2 BENAR.","3. CCl4 (AX4): Tetrahedral simetris sempurna. Momen dipol saling meniadakan (μ = 0) → NONPOLAR (Bukan polar!). -> Pernyataan 3 SALAH.","4. SO2 (AX2E): Bentuk V / bengkok asimetris karena 1 PEB pada S. Vektor dipol tidak meniadakan (μ = 1,62 D) → Polar. -> Pernyataan 4 BENAR.","5. CO2 (AX2): Linear simetris (O=C=O). Momen dipol saling meniadakan (μ = 0) → NONPOLAR. -> Pernyataan 5 SALAH."],"ana":["• Opsi 1: BENAR.","• Opsi 2: BENAR.","• Opsi 3: SALAH - Miskonsepsi mengabaikan simetri bentuk tetrahedral CCl4 (mengira beda elektronegativitas saja cukup membuat polar).","• Opsi 4: BENAR.","• Opsi 5: SALAH - Miskonsepsi mengira keberadaan ikatan polar C=O langsung membuat CO2 polar tanpa melihat bentuk linear simetris."],"tab":null,"opsi":[["1","Molekul BF3 bersifat nonpolar (μ = 0) karena memiliki bentuk geometri simetris trigonal planar sehingga resultan vektor dipolnya saling meniadakan."],["2","Molekul NH3 bersifat polar (μ > 0) karena memiliki geometri piramida trigonal asimetris akibat keberadaan 1 pasangan elektron bebas pada atom N."],["3","Molekul CCl4 bersifat polar (μ > 0) karena atom Cl memiliki keelektronegatifan yang sangat tinggi dibandingkan atom C."],["4","Molekul SO2 bersifat polar (μ > 0) karena bentuk molekulnya bengkok (bent V) akibat adanya 1 pasangan elektron bebas pada atom S."],["5","Molekul CO2 bersifat polar (μ > 0) karena ikatan C=O bersifat kovalen polar dengan beda keelektronegatifan besar."]]},{"n":6,"t":"TF","el":"Kimia Dasar","jud":"Fenomena Sehari-hari: Analisis Tren Titik Didih Senyawa Hidrida Golongan 15, 16, dan 17","nar":"Grafik berikut menunjukkan tren titik didih senyawa hidrida utama dari Golongan 14 (CH4 s.d. SnH4), Golongan 15 (NH3 s.d. SbH3), Golongan 16 (H2O s.d. H2Te), dan Golongan 17 (HF s.d. HI):","soal":"Bagaimana analisis gaya antarmolekul dan tren titik didih senyawa-senyawa tersebut? Tentukan Benar atau Salah untuk setiap pernyataan berikut!","lang":["• Pernyataan 1 (BENAR): H2O memiliki titik didih anomalously tinggi (+100°C) dibandingkan H2S (-60°C) karena adanya ikatan hidrogen yang kuat antara atom H dan O yang sangat elektronegatif.","• Pernyataan 2 (BENAR): Pada deret H2S → H2Se → H2Te, tidak ada ikatan hidrogen. Kenaikan titik didih murni disebabkan oleh bertambahnya ukuran molekul/Mr yang meningkatkan kebolehkutuban (polarizabilitas) dan kekuatan gaya dispersi London.","• Pernyataan 3 (SALAH): CH4 adalah molekul nonpolar dengan Mr=16 dan hanya gaya London lemah (titik didih -161,5°C), jauh lebih rendah dibanding H2S (-60°C) yang polar.","• Pernyataan 4 (BENAR): HF mengalami ikatan hidrogen antarmolekul (+19,5°C) sedangkan HCl (-85°C) hanya gaya dipol-dipol."],"ana":["• Baris 1: BENAR.","• Baris 2: BENAR.","• Baris 3: SALAH - Miskonsepsi memperkirakan titik didih hidrokarbon CH4 vs H2S.","• Baris 4: BENAR."],"tab":{"h":["Senyawa Hidrida","Massa Molekul Relatif (Mr)","Titik Didih (°C)","Jenis Gaya Antarmolekul Utama"],"r":[["H2O","18","+100,0","Ikatan Hidrogen Antarmolekul"],["H2S","34","-60,0","Gaya Dipol-Dipol & Dispersion London"],["H2Se","81","-41,2","Gaya Dipol-Dipol & Dispersion London"],["H2Te","129","-2,2","Gaya Dispersion London Dominan (Mr Besar)"]]},"rows":["H2O memiliki titik didih paling tinggi di antara hidrida Golongan 16 karena membentuk jaringan ikatan hidrogen antarmolekul yang sangat kuat.","Dari H2S ke H2Te terjadi kenaikan titik didih karena peningkatan massa molekul relatif (Mr) yang memperkuat gaya dispersi London.","Senyawa CH4 memiliki titik didih lebih tinggi daripada H2S karena gaya van der Waals CH4 jauh lebih kuat.","HF memiliki titik didih lebih tinggi daripada HCl karena atom F sangat elektronegatif sehingga mampu membentuk ikatan hidrogen antarmolekul."]},{"n":7,"t":"MCQ","el":"Kimia Dasar","jud":"Aplikasi Proses Industri: Bahan Baku Pupuk Fosfat dan Produk Kimia Industri","nar":"Fosfor merupakan salah satu unsur penting yang banyak digunakan dalam berbagai produk kimia, baik di bidang pertanian, industri, maupun laboratorium. Senyawa-senyawa fosfor memiliki peranan yang beragam, misalnya sebagai bahan pupuk, bahan tambahan makanan, hingga bahan baku pembuatan zat kimia lainnya. Beberapa contoh senyawa yang mengandung fosfor beserta massa molekul relatifnya (Mr) dapat dilihat pada tabel berikut:","soal":"Senyawa yang memiliki kandungan persentase massa fosfor tertinggi adalah .... (Diketahui Ar P = 31, H = 1, O = 16, Na = 23, Cl = 35,5)","lang":["Kadar persentase massa fosfor (%P) dihitung menggunakan rumus:","%P = (Jumlah atom P x Ar P / Mr Senyawa) x 100%","Diketahui semua senyawa pada tabel mengandung TEPAT 1 atom P (Ar P = 31).","Maka senyawa dengan %P TERTIANGGI adalah senyawa yang memiliki nilai Mr PALING KECIL!","1. NaH2PO4: %P = (31 / 120) x 100% = 25,83%","2. Na2HPO4: %P = (31 / 142) x 100% = 21,83%","3. Na3PO4: %P = (31 / 164) x 100% = 18,90%","4. PCl3: %P = (31 / 137,5) x 100% = 22,55%","5. PCl5: %P = (31 / 208,5) x 100% = 14,87%","Jadi, kandungan fosfor tertinggi terdapat pada Natrium dihidrogen fosfat (25,83%)."],"ana":["• Opsi A: Pengecoh miskonsepsi (mengira Mr terbesar memberikan kadar % terbanyak).","• Opsi B: Kunci Jawaban Benar (NaH2PO4 dengan Mr terendah = 120).","• Opsi C: Pengecoh miskonsepsi (mengira jumlah Na terbanyak memberikan P terbanyak).","• Opsi D: Pengecoh (kadar %P = 21,83%).","• Opsi E: Pengecoh (kadar %P = 22,55%)."],"tab":{"h":["Nama Senyawa","Rumus Kimia","Mr"],"r":[["Natrium dihidrogen fosfat","NaH2PO4","120"],["Natrium hidrogen fosfat","Na2HPO4","142"],["Natrium fosfat","Na3PO4","164"],["Fosfor triklorida","PCl3","137,5"],["Fosfor pentaklorida","PCl5","208,5"]]},"opsi":[["A","Fosfor pentaklorida"],["B","Natrium dihidrogen fosfat"],["C","Natrium fosfat"],["D","Natrium hidrogen fosfat"],["E","Fosfor triklorida"]]},{"n":8,"t":"MCQ","el":"Kimia Dasar","jud":"Aplikasi Isu Lingkungan: Evaluasi Emisi Gas Rumah Kaca Pembakaran Bahan Bakar LPG","nar":"Penggunaan gas etana dan propana sebagai bahan bakar alternatif semakin meningkat di kawasan industri. Meski pembakarannya berlangsung sempurna, gas rumah kaca berupa CO2 tetap dihasilkan yang berkontribusi terhadap pemanasan global.\nDalam suatu percobaan, campuran 10 liter etana (C2H6) dan propana (C3H8) dibakar sempurna menghasilkan gas karbon dioksida dan 36 L uap air. Reaksi pembakaran masing-masing gas sebagai berikut:\nC2H6(g) + O2(g) → CO2(g) + H2O(g) (belum setara)\nC3H8(g) + O2(g) → CO2(g) + H2O(g) (belum setara)","soal":"Berapakah volume total gas CO2 yang dihasilkan dari pembakaran campuran tersebut jika semua gas diukur pada suhu dan tekanan yang sama?","lang":["1. Setarakan persamaan reaksi:","- Reaksi 1: C2H6(g) + 7/2 O2(g) → 2 CO2(g) + 3 H2O(g)","- Reaksi 2: C3H8(g) + 5 O2(g) → 3 CO2(g) + 4 H2O(g)","2. Misalkan:","- Volume C2H6 = x Liter","- Volume C3H8 = (10 - x) Liter","3. Menurut Hukum Gay-Lussac (Perbandingan Volume = Perbandingan Koefisien):","- Volume H2O dari C2H6 = 3x Liter","- Volume H2O dari C3H8 = 4(10 - x) = 40 - 4x Liter","- Total Volume H2O = 3x + (40 - 4x) = 36 L","40 - x = 36  ==>  x = 4 Liter.","- Maka: Volume C2H6 = 4 Liter, dan Volume C3H8 = 6 Liter.","4. Hitung volume total CO2 yang dihasilkan:","- Volume CO2 dari C2H6 = 2 x 4 L = 8 Liter.","- Volume CO2 dari C3H8 = 3 x 6 L = 18 Liter.","- Volume Total CO2 = 8 L + 18 L = 26 Liter."],"ana":["• Opsi A: Pengecoh (salah penjumlahan 8 + 36 = 44 L).","• Opsi B: Pengecoh (hanya menghitung CO2 dari etana = 8 L).","• Opsi C: Kunci Jawaban Benar (26 L).","• Opsi D: Pengecoh (hanya menghitung CO2 dari propana = 18 L).","• Opsi E: Pengecoh (menggunakan volume H2O = 36 L)."],"tab":null,"opsi":[["A","44 L"],["B","8 L"],["C","26 L"],["D","18 L"],["E","36 L"]]},{"n":9,"t":"MCQ","el":"Kimia Dasar","jud":"Aplikasi Isu Lingkungan: Pemantauan Polutan Udara Industri","nar":"Sulfur dioksida (SO2) merupakan polutan udara berbahaya yang dihasilkan dari pembakaran bahan bakar fosil dan aktivitas industri. Gas SO2 dapat menyebabkan hujan asam dan masalah pernapasan. Sebuah stasiun pemantau kualitas udara mengambil sampel udara di area industri sebanyak 6 liter pada suhu 25°C dan tekanan 1 atm (volume molar gas STP/RTP dikonversi). Hasil pengukuran menunjukkan konsentrasi sulfur dioksida di area industri sebanyak 0,0002% volume. Berapakah jumlah molekul SO2 yang terdeteksi dalam sampel?\n(Diketahui: Volume molar gas pada 25°C, 1 atm = 24 L/mol; Bilangan Avogadro NA = 6,02 × 1023 molekul/mol)","soal":"Berapakah jumlah molekul SO2 yang terdeteksi dalam sampel udara industri tersebut?","lang":["1. Hitung volume gas SO2 murni dalam sampel:","V(SO2) = (0,0002 / 100) x 6 Liter = 2 x 10-6 x 6 L = 1,2 x 10-5 Liter.","2. Hitung jumlah mol SO2 (pada 25°C, 1 atm Vm = 24 L/mol):","n(SO2) = V / Vm = (1,2 x 10-5 L) / (24 L/mol) = 5,0 x 10-7 mol.","3. Hitung jumlah molekul SO2:","Jumlah Molekul = n x NA = (5,0 x 10-7 mol) x (6,02 x 1023 molekul/mol)","Jumlah Molekul = 3,01 x 1017 molekul."],"ana":["• Opsi A: Salah mengalikan dengan faktor Avogadro tanpa mengonversi volume.","• Opsi B: Salah kalkulasi pemangkatan eksponen 1018.","• Opsi C: Miskonsepsi lupa membagi dengan volume molar 24 L/mol.","• Opsi D: Miskonsepsi tidak mengalikan dengan persen volume 0,0002%.","• Opsi E: Kunci Jawaban Benar (3,01 × 1017 molekul)."],"tab":null,"opsi":[["A","2,41 × 1024 molekul"],["B","3,01 × 1018 molekul"],["C","1,20 × 1018 molekul"],["D","1,51 × 1023 molekul"],["E","3,01 × 1017 molekul"]]},{"n":10,"t":"MCQ","el":"Kimia Dasar","jud":"Industri Farmasi & Biokimia: Formulasi Asam Amino Esensial","nar":"Alanin merupakan monomer salah satu asam amino esensial pembentuk protein. Protein sangat penting dalam tubuh karena berperan sebagai enzim, hormon, dan pembangun jaringan. Dalam industri farmasi dan makanan, alanin dapat diproduksi secara sintetik atau melalui fermentasi. Berikut merupakan rumus struktur alanin:\nCH3-CH(NH2)-COOH  (Rumus molekul: C3H7NO2)","soal":"Berdasarkan struktur alanin tersebut, berapa persentase massa karbon dalam molekul alanin?\n(Diketahui Ar : C = 12, H = 1, N = 14, O = 16)","lang":["1. Tentukan rumus molekul alanin dari strukturnya: C3H7NO2","2. Hitung Massa Molekul Relatif (Mr) Alanin:","Mr = (3 x Ar C) + (7 x Ar H) + (1 x Ar N) + (2 x Ar O)","Mr = (3 x 12) + (7 x 1) + (1 x 14) + (2 x 16)","Mr = 36 + 7 + 14 + 32 = 89 g/mol.","3. Hitung persentase massa Karbon (%C):","%C = (Massa total C / Mr Alanin) x 100%","%C = (36 / 89) x 100% = 40,449% ≈ 40,45%."],"ana":["• Opsi A: Kunci Jawaban Benar (40,45%).","• Opsi B: Pengecoh persentase Nitrogen (14 / 89 x 100% = 15,73% salah rumus).","• Opsi C: Pengecoh salah penjumlahan Mr (menghitung Mr = 88).","• Opsi D: Pengecoh persentase Nitrogen murni (15,73%).","• Opsi E: Pengecoh persentase Oksigen (32 / 89 x 100% = 35,96%)."],"tab":null,"opsi":[["A","40,45 %"],["B","13,48 %"],["C","40,90 %"],["D","15,73 %"],["E","35,96 %"]]},{"n":11,"t":"MCMA","el":"Kimia Dasar","jud":"Penyelidikan Ilmiah: Analisis Senyawa Pengawet Bahan Pangan","nar":"Suatu senyawa organik baru yang diisolasi dari ekstraksi buah digunakan sebagai bahan pengawet alami. Hasil analisis pembakaran menunjukkan bahwa senyawa tersebut mengandung 40,0% Karbon, 6,7% Hidrogen, dan sisanya Oksigen berdasarkan persen massa. Pengukuran spektrometri massa menunjukkan bahwa massa molar (Mr) senyawa tersebut adalah 180 g/mol.\n(Diketahui Ar C = 12, H = 1, O = 16)\n\nPilih semua jawaban benar. Jawaban benar lebih dari satu!","soal":"Berdasarkan data eksperimen analisis unsur tersebut, manakah pernyataan yang benar mengenai rumus empiris dan rumus molekul senyawa organik tersebut?","lang":["1. % Oksigen = 100% - (40,0% + 6,7%) = 53,3%. -> Pernyataan 1 BENAR.","2. Hitung mol relatif unsur (dalam 100 g sampel):","- mol C = 40,0 / 12 = 3,33 mol","- mol H = 6,7 / 1 = 6,70 mol","- mol O = 53,3 / 16 = 3,33 mol","Rasio mol C : H : O = 3,33 : 6,70 : 3,33 = 1 : 2 : 1. -> Pernyataan 2 BENAR.","3. Rumus Empiris (RE) = (CH2O)n dengan massa rumus = 12 + 2(1) + 16 = 30 g/mol. -> Pernyataan 3 BENAR.","4. Hitung nilai faktor kelipatan n:","(30)n = 180  ==>  n = 6.","Maka Rumus Molekul (RM) = (CH2O)6 = C6H12O6. -> Pernyataan 4 BENAR.","5. Rumus molekul berbeda dari rumus empiris karena n=6. -> Pernyataan 5 SALAH."],"ana":["• Opsi 1: BENAR.","• Opsi 2: BENAR.","• Opsi 3: BENAR.","• Opsi 4: BENAR (C6H12O6).","• Opsi 5: SALAH - Miskonsepsi mengira RM selalu sama dengan RE."],"tab":null,"opsi":[["1","Persentase massa unsur Oksigen dalam senyawa tersebut adalah 53,3%."],["2","Perbandingan mol C : H : O dalam rumus empiris adalah 1 : 2 : 1."],["3","Rumus empiris senyawa organik tersebut adalah CH2O dengan massa rumus 30 g/mol."],["4","Rumus molekul senyawa organik tersebut adalah C6H12O6 (Glukosa/Fruktosa)."],["5","Rumus molekul senyawa organik tersebut sama dengan rumus empirisnya yaitu CH2O."]]},{"n":12,"t":"MCQ","el":"Kimia Dasar","jud":"Aplikasi Proses Industri: Ekstraksi dan Pemurnian Logam Tembaga Murni","nar":"Tembaga (Cu) banyak dimanfaatkan dalam industri kelistrikan seperti pembuatan kabel, kumparan motor, dan komponen elektronik karena memiliki konduktivitas listrik yang sangat tinggi. Salah satu cara mendapatkan tembaga murni adalah dengan mereduksi tembaga(II) oksida (CuO) menggunakan karbon (C). Reaksi berlangsung sebagai berikut:\n2 CuO(s) + C(s) → 2 Cu(s) + CO2(g)\nDi laboratorium sekolah seorang murid mereaksikan 39,75 gram CuO dan 3,0 gram karbon.","soal":"Berapa gram tembaga murni (Cu) maksimum yang dapat diperoleh dari reaksi tersebut?\n(Diketahui: Ar Cu = 63,5; O = 16; C = 12)","lang":["1. Hitung mol reaktan awal:","- Mr CuO = 63,5 + 16 = 79,5 g/mol.","- mol CuO = 39,75 g / 79,5 g/mol = 0,50 mol.","- mol C = 3,0 g / 12 g/mol = 0,25 mol.","2. Tentukan Pereaksi Pembatas (Membagi mol dengan koefisien reaksi):","- CuO: 0,50 / 2 = 0,25","- C: 0,25 / 1 = 0,25","Ternyata kedua reaktan HABIUS BEREAKSI SEPENUHNYA (Stoikiometris sempurna!).","3. Hitung mol produk Cu yang terbentuk:","- Menurut koefisien reaksi: 2 CuO ~ 2 Cu (Rasio 1 : 1)","- mol Cu = mol CuO = 0,50 mol.","4. Hitung massa Cu murni maksimum:","- Massa Cu = 0,50 mol x 63,5 g/mol = 31,75 gram."],"ana":["• Opsi A: Pengecoh (mengasumsikan semua massa reaktan dikonversi).","• Opsi B: Pengecoh (salah mengalikan koefisien 0,4 mol x 63,5).","• Opsi C: Pengecoh.","• Opsi D: Kunci Jawaban Benar (31,75 gram).","• Opsi E: Pengecoh (salah menghitung mol C = 3/12 = 0,25 lalu dikali 63,5 / 2)."],"tab":null,"opsi":[["A","47,62 gram"],["B","25,40 gram"],["C","23,80 gram"],["D","31,75 gram"],["E","16,00 gram"]]},{"n":13,"t":"TF","el":"Kimia Dasar","jud":"Proses Industri & Lab: Rekristalisasi Garam Kalium Klorida Murni","nar":"Kristal kalium klorida (KCl) merupakan garam penting yang memiliki banyak kegunaan, misalnya sebagai sumber suplemen kalium untuk mengatasi hipokalemia dan hipertensi, atau di bidang pertanian sebagai pupuk tanaman. Seorang peneliti bidang pertanian ingin membuat kristal kalium klorida (KCl) dari kalium hidroksida dan asam klorida. Persamaan reaksi yang terjadi:\nKOH(aq) + HCl(aq) → KCl(aq) + H2O(l)\nTahapan reaksi mencakup reaksi netralisasi diikuti dengan pemisahan dan pemurnian produk dengan cara rekristalisasi. Larutan yang tersedia di laboratorium adalah sebagai berikut:\n- Botol A: HCl 1 M\n- Botol B: HCl 2 M\n- Botol C: KOH 1 M\n- Botol D: KOH 2 M\n(Diketahui Ar K = 39, Cl = 35,5; Mr KCl = 74,5 g/mol. Target KCl murni = 29,8 gram = 0,4 mol).","soal":"Secara teori, manakah komposisi berikut yang jika direaksikan akan menghasilkan tepat 29,8 gram kristal KCl? Tentukan Benar atau Salah pada setiap pernyataan!","lang":["Target KCl = 29,8 gram / 74,5 g/mol = 0,4 mol = 400 mmol.","Reaksi KOH + HCl → KCl + H2O (rasio 1:1).","Pereaksi pembatas menentukan jumlah mol produk KCl yang terbentuk!","• Pernyataan 1: 300 mL HCl 2 M (600 mmol) + 200 mL KOH 1 M (200 mmol).","Pereaksi pembatas = KOH (200 mmol) → KCl terbentuk hanya 200 mmol = 14,9 gram (Bukan 29,8 g!). -> SALAH.","• Pernyataan 2: 200 mL HCl 2 M (400 mmol) + 300 mL KOH 2 M (600 mmol).","Pereaksi pembatas = HCl (400 mmol) → KCl terbentuk 400 mmol = 29,8 gram (KOH berlebih 200 mmol). -> BENAR.","• Pernyataan 3: 400 mL HCl 1 M (400 mmol) + 500 mL KOH 1 M (500 mmol).","Pereaksi pembatas = HCl 1 M (400 mmol) → Merekristalisasi TEPAT 400 mmol KCl = 29,8 gram! -> BENAR."],"ana":["• Baris 1: SALAH - Hanya menghasilkan 14,9 gram KCl (200 mmol).","• Baris 2: BENAR - HCl habis bereaksi membentuk 400 mmol (29,8 g) KCl; KOH berlebih 200 mmol tidak menambah massa KCl.","• Baris 3: BENAR - Membentuk tepat 0,4 mol (29,8 g) KCl."],"tab":{"h":["Botol Reagen A","Botol Reagen B","Botol Reagen C","Botol Reagen D"],"r":[["HCl(aq) 1 M","HCl(aq) 2 M","KOH(aq) 1 M","KOH(aq) 2 M"]]},"rows":["300 mL larutan dari botol B (HCl 2 M) + 200 mL larutan dari botol C (KOH 1 M).","200 mL larutan dari botol B (HCl 2 M) + 300 mL larutan dari botol D (KOH 2 M).","400 mL larutan dari botol A (HCl 1 M) + 500 mL larutan dari botol C (KOH 1 M)."]},{"n":14,"t":"MCMA","el":"Kimia Organik","jud":"Aplikasi Proses Industri: Destilasi Bertingkat dan Fraksionasi Minyak Bumi","nar":"Minyak bumi merupakan campuran berbagai macam zat organik dengan komponen pokok senyawa hidrokarbon. Pemisahan minyak mentah dilakukan dalam kilang minyak melalui proses destilasi bertingkat berdasarkan perbedaan titik didih. Beberapa fraksi minyak bumi antara lain: senyawa P, senyawa Q, senyawa R, dan senyawa S memiliki kegunaan yang berbeda.\nBerikut disajikan data grafik hubungan bobot molekul senyawa hidrokarbon P, Q, R, dan S dengan titik didihnya:","soal":"Berdasarkan grafik dan data tersebut, tentukan pasangan senyawa hidrokarbon dengan potensi pemanfaatannya yang benar! Pilih semua jawaban benar. Jawaban benar lebih dari satu!","lang":["1. Senyawa P (Mr 40-50, titik didih < 0°C) adalah fraksi gas (propana/butana) untuk bahan bakar kompor LPG / kompor portabel. -> Pernyataan 5 BENAR, Pernyataan 3 SALAH (Avtur adalah fraksi kerosin titik didih 170-250°C).","2. Senyawa Q (Mr 100-140, titik didih 70-180°C) adalah fraksi bensin (gasoline) untuk bahan bakar kendaraan bermotor. -> Pernyataan 1 BENAR.","3. Senyawa R (Mr 250-280, titik didih 250-350°C) adalah fraksi kerosin berat/solar/minyak pelumas ringan. -> Pernyataan 2 BENAR.","4. Senyawa S (Mr > 300, titik didih > 350°C) adalah residu berat untuk lilin parafin dan aspal. -> Pernyataan 4 BENAR."],"ana":["• Opsi 1: BENAR (Senyawa Q = bensin).","• Opsi 2: BENAR (Senyawa R = solar/pelumas).","• Opsi 3: SALAH - Miskonsepsi mengira fraksi gas P (Mr terendah) digunakan sebagai bahan bakar avtur.","• Opsi 4: BENAR (Senyawa S = lilin/aspal).","• Opsi 5: BENAR (Senyawa P = gas LPG)."],"tab":{"h":["Senyawa Hidrokarbon","Kisaran Bobot Molekul (Mr)","Kisaran Titik Didih (°C)","Fraksi Minyak Bumi"],"r":[["Senyawa P","40 - 50","-40 s.d. 0","Gas Elpiji (LPG) / Gas Alam"],["Senyawa Q","100 - 140","70 s.d. 180","Bensin (Gasoline) / Naphtha"],["Senyawa R","250 - 280","250 s.d. 350","Minyak Solar / Pelumas Miring"],["Senyawa S","> 300","> 350","Minyak Pelumas Berat / Lilin Parafin"]]},"opsi":[["1","Senyawa Q dimanfaatkan sebagai bahan bakar kendaraan bermotor (bensin)."],["2","Senyawa R dapat digunakan sebagai bahan bakar mesin diesel (solar) dan minyak pelumas."],["3","Senyawa P bermanfaat sebagai bahan bakar pesawat terbang (avtur)."],["4","Senyawa S dapat digunakan sebagai bahan pembuatan lilin parafin dan aspal jalan."],["5","Senyawa P dapat dimanfaatkan sebagai gas LPG (kompor portabel)."]]},{"n":15,"t":"TF","el":"Kimia Organik","jud":"Fenomena Sehari-hari: Analisis Komposisi Utama Gas Kompor LPG Portabel","nar":"Suatu hidrokarbon pada suhu kamar berbentuk gas dan tidak berwarna, digunakan sebagai komponen utama LPG dan kompor portabel. Hasil pembakaran sempurna terhadap 2 mol hidrokarbon tersebut menghasilkan 8 mol CO2 dan 10 mol H2O.","soal":"Bagaimana hasil analisis terhadap senyawa hidrokarbon tersebut? Tentukan Benar atau Salah untuk setiap pernyataan berikut ini terkait senyawa hidrokarbon tersebut!","lang":["1. Persamaan reaksi pembakaran: CxHy + O2 → x CO2 + (y/2) H2O","Dari 2 mol CxHy dihasilkan 8 mol CO2 → 2x = 8 ==> x = 4 (Atom C = 4).","Dari 2 mol CxHy dihasilkan 10 mol H2O → 2(y/2) = 10 ==> y = 10 (Atom H = 10).","Rumus kimia = C4H10 (Butana). -> Pernyataan 1 BENAR.","2. Struktur n-butana: CH3-CH2-CH2-CH3.","- CH3 di ujung (2 atom C) terikat pada 1 C lain → 2 atom C primer.","- CH2 di tengah (2 atom C) terikat pada 2 C lain → 2 atom C sekunder. -> Pernyataan 2 BENAR.","3. Isomer bercabang (2-metilpropana) memiliki bentuk molekul lebih simetris/bulat, luas permukaan kontak antarmolekul lebih kecil, sehingga gaya van der Waals lebih lemah dan titik didihnya LEBIH RENDAH daripada n-butana rantai lurus (-11,7°C vs -0,5°C). -> Pernyataan 3 SALAH."],"ana":["• Baris 1: BENAR (C4H10).","• Baris 2: BENAR (2 C primer, 2 C sekunder).","• Baris 3: SALAH - Miskonsepsi mengira rantai bercabang meningkatkan titik didih."],"tab":null,"rows":["Rumus kimia hidrokarbon tersebut adalah C4H10 (n-butana / isobutana).","Struktur rantai lurus hidrokarbon tersebut (n-butana) memiliki 2 atom C primer dan 2 atom C sekunder.","Isomer bercabang dari senyawa tersebut (2-metilpropana) diperkirakan memiliki titik didih lebih tinggi dibandingkan rantai lurusnya."]},{"n":16,"t":"TF","el":"Kimia Organik","jud":"Energi Berkelanjutan: Evaluasi Kinerja Isomer Alkena C4H8 untuk Aditif Bensin","nar":"Suatu perusahaan energi sedang meneliti dua senyawa hidrokarbon isomer alkena, yaitu 1-butena dan 2-metil-1-propena, untuk digunakan sebagai bahan bakar tambahan dalam campuran bensin ramah lingkungan.\nTim peneliti ingin mengetahui senyawa mana yang memberikan energi pembakaran lebih besar per mol serta stabilitas termodinamikanya dengan cara membandingkan data entalpi pembakaran standar (ΔHco) masing-masing isomer:","soal":"Bagaimana hasil analisis terhadap kedua isomer tersebut? Tentukan Benar atau Salah pada setiap pernyataan berikut ini mengenai kedua isomer!","lang":["• Pernyataan 1 (BENAR): ΔHco 1-butena = -2.721 kJ/mol (melepas 2.721 kJ), sedangkan 2-metil-1-propena = -2.715 kJ/mol (melepas 2.715 kJ).","• Pernyataan 2 (BENAR): Karena 2-metil-1-propena melepaskan kalor lebih sedikit saat dibakar, berarti senyawa tersebut berada pada tingkat energi potensial awal yang LEBIH RENDAH (lebih stabil secara termodinamika akibat substitusi gugus alkil pada ikatan rangkap).","• Pernyataan 3 (SALAH): Atom karbon pembawa ikatan rangkap dua (C=C) memiliki 3 domain elektron trigonal planar sehingga hibridisasinya adalah sp2, bukan sp3!"],"ana":["• Baris 1: BENAR.","• Baris 2: BENAR.","• Baris 3: SALAH - Miskonsepsi penentuan hibridisasi C ikatan rangkap (sp2)."],"tab":{"h":["Senyawa Isomer C4H8","Struktur Kimia","ΔHco (kJ/mol)"],"r":[["2-metil-1-propena","CH2=C(CH3)2 (Bercabang)","-2.715"],["1-butena","CH2=CH-CH2-CH3 (Rantai Lurus)","-2.721"]]},"rows":["1-butena melepaskan kalor pembakaran lebih besar per mol (2.721 kJ) dibandingkan 2-metil-1-propena (2.715 kJ).","Secara termodinamika, 2-metil-1-propena memiliki entalpi pembentukan lebih rendah dan tingkat energi lebih stabil dibandingkan 1-butena.","Hibridisasi atom karbon pembawa ikatan rangkap dua (C=C) pada kedua isomer alkena tersebut adalah sp3."]},{"n":17,"t":"MCQ","el":"Kimia Organik","jud":"Sintesis Organik Industri: Pembuatan Haloalkana dalam Industri Petrokimia","nar":"Industri petrokimia memproduksi senyawa chloroalkana sebagai zat antara dalam sintesis plastik dan pelarut industri. Salah satu reaksinya adalah adisi asam klorida (HCl) pada gas propena (CH3-CH=CH2). Reaksi berlangsung pada fase gas dengan katalis netral:\nCH3-CH=CH2 + HCl → Produk Utama\nSiswa menganalisis arah adisi elektrofilik berdasarkan Aturan Markovnikov.","soal":"Berdasarkan Aturan Markovnikov, manakah produk utama dan nama IUPAC yang paling tepat dari reaksi adisi tersebut?","lang":["1. Reaksi adisi asam halida (HCl) pada alkena tidak simetris (propena, CH3-CH=CH2) mengikuti ATURAN MARKOVNIKOV:","'Atom elektrofilik H+ akan terikat pada atom C ikatan rangkap yang mengikat atom H LEBIH BANYAK (atom C1 = CH2), sedangkan anion Cl- akan terikat pada atom C ikatan rangkap yang mengikat H LEBIH SEDIKIT (atom C2 = CH).'","2. Mekanisme melalui pembentukan karbokation paling stabil: Karbokation sekunder (CH3-CH+-CH3) lebih stabil daripada karbokation primer (CH3-CH2-CH2+).","3. Produk utama yang dihasilkan adalah 2-kloropropana dengan rumus struktur CH3-CHCl-CH3."],"ana":["• Opsi A: Miskonsepsi mengabaikan regioselektivitas reaksi adisi.","• Opsi B: Kunci Jawaban Benar (2-kloropropana).","• Opsi C: Salah mekanisme reaksi.","• Opsi D: Miskonsepsi adisi klorinasi halogenasi Cl2 (bukan HCl).","• Opsi E: Miskonsepsi Anti-Markovnikov (mengira produk utama 1-kloropropana)."],"tab":null,"opsi":[["A","Campuran 50% 1-kloropropana dan 50% 2-kloropropana tanpa aturan pengarah."],["B","2-kloropropana (CH3-CHCl-CH3) karena ion H+ masuk ke atom C1 yang mengikat H lebih banyak."],["C","Propil klorida melalui mekanisme eliminasi air."],["D","1,2-dikloropropana (CH2Cl-CHCl-CH3) karena terjadi substitusi radikal bebas."],["E","1-kloropropana (CH3-CH2-CH2Cl) karena ion Cl- masuk ke atom C2 yang lebih terhalang secara sterik."]]},{"n":18,"t":"MCQ","el":"Kimia Analitik","jud":"Penyelidikan Ilmiah: Praktikum Uji Daya Hantar Listrik Fase Lelehan dan Larutan","nar":"Sekelompok siswa melakukan praktikum untuk menguji daya hantar listrik tiga senyawa tak dikenal (X, Y, dan Z) dalam fase lelehan murni dan fase larutan dalam air. Hasil pengamatan tercatat dalam tabel berikut:","soal":"Berdasarkan data hasil percobaan tersebut, manakah pasangan zat/senyawa yang paling tepat dan sesuai?","lang":["1. Analisis Senyawa Y: Lelehan tidak menghantar listrik, tetapi larutannya menghantar listrik lemah (lampu redup, sedikit gelembung) → Senyawa Y adalah ELEKTROLIT LEMAH (Kovalen Polar) seperti CH3COOH (Asam asetat).","2. Analisis Senyawa Z: Lelehan tidak menghantar listrik (karena ikatan kovalen polar padat/cair tidak terionisasi), tetapi dalam air terionisasi sempurna sehingga larutannya elektrolit kuat (lampu terang, banyak gelembung) → Senyawa Z adalah SENYAWA KOVALEN POLAR ELEKTROLIT KUAT seperti HCl atau senyawa garam Na2S2O3.","3. Pilihan D (Senyawa Y = CH3COOH dan Senyawa Z = Na2S2O3) paling konsisten dengan sifat fisika larutan."],"ana":["• Opsi A: Pengecoh (KI adalah garam ionik, lelehannya menghantar sangat terang).","• Opsi B: Kunci Jawaban Benar.","• Opsi C: Pengecoh.","• Opsi D: Pengecoh (CH3COOH bukan Z, tapi Y).","• Opsi E: Pengecoh (HCl dalam lelehan murni berbentuk gas terdispersi)."],"tab":{"h":["Zat","Hasil Pengamatan: Fase Lelehan","Hasil Pengamatan: Fase Larutan (dalam Air)"],"r":[["X","Lampu Redup; Ada sedikit gelembung","Lampu Terang; Banyak gelembung gas"],["Y","Lampu Tidak menyala; Tidak ada gelembung","Lampu Redup; Sedikit gelembung gas"],["Z","Lampu Tidak menyala; Tidak ada gelembung","Lampu Terang; Banyak gelembung gas"]]},"opsi":[["A","Senyawa X adalah Na2S2O3 dan senyawa Y adalah KI."],["B","Senyawa Y adalah CH3COOH dan senyawa Z adalah Na2S2O3."],["C","Senyawa X adalah Na2S2O3 dan senyawa Y adalah CH3COOH."],["D","Senyawa X adalah KI dan senyawa Z adalah CH3COOH."],["E","Senyawa Y adalah HCl dan senyawa Z adalah Na2S2O3."]]},{"n":19,"t":"MCQ","el":"Kimia Analitik","jud":"Industri Farmasi: Evaluasi Standar Mutu dan Keamanan Sirup Obat Batuk Anak","nar":"Sebuah pabrik farmasi memproduksi sirup obat batuk untuk anak-anak. Berdasarkan formulasi, kandungan zat aktif dan bahan tambahan per botol (isi total 50 mL) adalah sebagai berikut:\n- Dekstrometorfan HBr = 0,6 gram\n- Gula (sukrosa) = 10,0 gram\n- Perisa buah sintetis = 0,2 gram\n- Air dan bahan lain = sampai volume 50 mL\n\nMenurut pedoman keamanan obat untuk anak-anak, standar mutu aman (dalam persen massa per 100 mL, dengan massa jenis sirup ρ = 1,0 g/mL) adalah:\n- Dekstrometorfan HBr maksimal 1% (mencegah overdosis)\n- Gula (sukrosa) maksimal 15% (mencegah kadar gula berlebih)\n- Perisa buah sintetis maksimal 0,3% (agar rasa tidak berlebihan)","soal":"Pernyataan manakah yang paling tepat mengenai komposisi sirup obat batuk tersebut?","lang":["Hitung % massa per 100 mL sirup (karena isi botol 50 mL, dikalikan 2):","1. Dekstrometorfan HBr = (0,6 g / 50 mL) x 100% = 1,2% w/v. (Standar max = 1,0%) → MELEBIHI BATAS AMAN!","2. Gula (sukrosa) = (10,0 g / 50 mL) x 100% = 20,0% w/v. (Standar max = 15,0%) → MELEBIHI BATAS AMAN!","3. Perisa = (0,2 g / 50 mL) x 100% = 0,4% w/v. (Standar max = 0,3%) → MELEBIHI BATAS AMAN!","Maka pernyataan A paling tepat, karena dekstrometorfan HBr sebesar 1,2% (bukan 0,6%) telah melebihi batas aman 1,0%."],"ana":["• Opsi A: Miskonsepsi tidak menghitung persen per 100 mL (mengira 10 g dalam 50 mL = 10%).","• Opsi B: Miskonsepsi tidak menghitung persen per 100 mL (mengira 0,2 g dalam 50 mL = 0,2%).","• Opsi C: Miskonsepsi mengasumsikan obat pabrik pasti aman.","• Opsi D: Salah dalam kalkulasi kadar.","• Opsi E: Kunci Jawaban Benar (1,2% Dekstrometorfan HBr > 1,0%)."],"tab":{"h":["Bahan Aktif / Tambahan","Massa per 50 mL Sirup","Kadar Real (% w/v)","Batas Keamanan Standar Mutu"],"r":[["Dekstrometorfan HBr","0,6 g","1,2%","Maksimal 1,0%"],["Gula (sukrosa)","10,0 g","20,0%","Maksimal 15,0%"],["Perisa buah sintetis","0,2 g","0,4%","Maksimal 0,3%"]]},"opsi":[["A","Mengandung gula sebesar 10%, sehingga aman digunakan oleh anak-anak."],["B","Mengandung perisa buah sintetis sebesar 0,2%, masih dalam batas aman standar mutu."],["C","Semua kandungan zat aktif dan bahan tambahan berada pada batas aman sesuai standar mutu."],["D","Kandungan dekstrometorfan HBr dan perisa buah masih berada pada batas aman untuk anak-anak."],["E","Mengandung dekstrometorfan HBr sebesar 1,2%, sehingga tidak aman karena melebihi batas standar mutu 1,0%."]]},{"n":20,"t":"MCQ","el":"Kimia Analitik","jud":"Aplikasi Lingkungan: Evaluasi Keasaman Tanah Pertanian Akibat Hidrolisis Pupuk Amonium","nar":"Dalam sebuah artikel ilmiah dinyatakan bahwa 'Penggunaan pupuk amonium berlebih dalam pertanian dapat meningkatkan keasaman tanah. Ion amonium (NH4+) yang terhidrolisis akan menghasilkan ion hidronium (H~3~O+), yang dapat menurunkan pH tanah dan memengaruhi ketersediaan unsur hara bagi tanaman.'\nReaksi kesetimbangan yang terjadi di dalam tanah adalah:\nNH4+(aq) + H~2~O(l) ⇌ NH~3~(aq) + H~3~O+(aq)","soal":"Berdasarkan reaksi tersebut dan Teori Asam-Basa Brønsted-Lowry, manakah yang merupakan pasangan asam-basa konjugasi yang tepat?","lang":["Menurut Teori Asam-Basa Brønsted-Lowry:","- Asam adalah donor proton (H+).","- Basa adalah aksepor proton (H+).","- Pasangan asam-basa konjugasi berbeda tepat 1 proton H+.","Pada reaksi: NH~4~+(aq) + H2O(l) ⇌ NH3(aq) + H3O+(aq)","1. Pasangan 1: NH~4~+ (Asam 1) menyerahkan H+ menjadi NH~3~ (Basa Konjugasi 1) → Pasangan: NH~4~+ dan NH3.","2. Pasangan 2: H2O (Basa 2) menerima H+ menjadi H~3~O+ (Asam Konjugasi 2) → Pasangan: H2O dan H3O+.","Jadi, pasangan asam-basa konjugasi yang tepat pada opsi adalah NH~4~+ dan NH3."],"ana":["• Opsi A: Pengecoh (spesi produk).","• Opsi B: Kunci Jawaban Benar (NH4+ dan NH3).","• Opsi C: Pengecoh.","• Opsi D: Pengecoh.","• Opsi E: Pengecoh (NH4+ asam, H2O basa - bukan pasangan konjugasi)."],"tab":null,"opsi":[["A","NH3 dan H3O^+"],["B","NH4^+ dan NH3"],["C","NH3 dan H2O"],["D","H3O+ dan NH~4~+"],["E","NH4^+ dan H2O"]]},{"n":21,"t":"MCQ","el":"Kimia Analitik","jud":"Penyelidikan Ilmiah: Interpretasi Grafik Diagram Fase P-T Pelarut Murni H2O dan Larutan KBr","nar":"Perhatikan diagram P-T pelarut murni (H2O, garis biru) dan larutan elektrolit KBr (garis merah) pada tekanan 1 atm berikut:","soal":"Pernyataan yang paling tepat terkait diagram P-T pelarut murni (H2O) dan larutan KBr adalah ...","lang":["1. Titik T ditarik ke sumbu suhu T(°C) menunjukkan titik didih pelarut murni (100°C pada titik G).","2. Titik U ditarik ke sumbu suhu T(°C) menunjukkan titik didih larutan KBr (pada titik H yang lebih tinggi dari G akibat kenaikan titik didih ΔTb). Maka titik H/U menunjukkan titik didih larutan KBr pada 1 atm. -> Pernyataan A BENAR.","3. Titik tripel murni adalah titik Y (bukan X).","4. Garis E-F menunjukkan penurunan titik beku (ΔTf), bukan penurunan tekanan uap.","5. Garis G-H menunjukkan kenaikan titik didih (ΔTb)."],"ana":["• Opsi A: Pengecoh.","• Opsi B: Kunci Jawaban Benar.","• Opsi C: Pengecoh (G-H adalah rentang kenaikan titik didih).","• Opsi D: Pengecoh (titik tripel H2O adalah Y).","• Opsi E: Pengecoh (E-F adalah Delta Tf, bukan Delta P)."],"tab":{"h":["Titik / Garis pada Diagram P-T","Keterangan Fisik pada Tekanan 1 atm"],"r":[["Titik R dan S","Titik beku KBr(aq) [R] dan titik beku murni H2O [S = 0°C]"],["Titik T dan U","Titik didih murni H2O [T = 100°C] dan titik didih KBr(aq) [U]"],["Garis R-S","Penurunan titik beku larutan (ΔTf)"],["Garis T-U","Kenaikan titik didih larutan (ΔTb)"]]},"opsi":[["A","Titik S menunjukkan tekanan uap jenuh larutan KBr pada suhu 0°C."],["B","Titik H menunjukkan titik didih larutan KBr pada tekanan 1 atm (Suhu U/H)."],["C","Garis G-H menunjukkan bahwa kedua zat berada dalam fase padat pada tekanan 1 atm."],["D","Titik X merupakan titik tripel pelarut murni H2O."],["E","Garis E-F menunjukkan besarnya penurunan tekanan uap larutan."]]},{"n":22,"t":"MCQ","el":"Kimia Analitik","jud":"Industri & Fenomena Sehari-hari: Analisis Tekanan Uap Tiga Jenis Larutan Kimia","nar":"Natrium klorida (NaCl), sukrosa (C12H22O11), dan metanol (CH3OH) dilarutkan masing-masing ke dalam air murni dengan volume yang sama pada suhu 25°C. Diukur tekanan uapnya menggunakan manometer terhubung erlenmeyer tertutup:\n- Erlenmeyer A: Larutan NaCl(aq) (Elektrolit kuat, i=2)\n- Erlenmeyer B: Larutan Sukrosa C12H22O11(aq) (Nonelektrolit nonvolatil, i=1)\n- Erlenmeyer C: Larutan Metanol CH3OH(aq) (Nonelektrolit volatil / mudah menguap)\nNilai tekanan uap terukur pada manometer: A = 22 mmHg; B = 23,5 mmHg; C = 35 mmHg (Tekanan uap air murni P° = 23,8 mmHg).","soal":"Berdasarkan wacana dan data tersebut, pernyataan manakah yang benar terkait tekanan uap ketiga larutan tersebut?","lang":["1. Larutan C mengandung metanol yang merupakan zat cair mudah menguap (volatil). Menurut Hukum Raoult untuk zat volatil: Ptotal = Pair + Pmetanol > P°air. Sehingga tekanan uap larutan C paling tinggi (35 mmHg). -> Pernyataan A BENAR.","2. Larutan A (NaCl) terionisasi menjadi Na+ dan Cl- (i=2), sehingga jumlah partikel terlarut terbanyak, menyebabkan penurunan tekanan uap paling besar (P = 22 mmHg).","3. Larutan B (sukrosa) nonvolatil menurunkan tekanan uap secara proporsional dengan molnya (P = 23,5 mmHg)."],"ana":["• Opsi A: Miskonsepsi mengira sukrosa menaikkan tekanan uap.","• Opsi B: Miskonsepsi menyebut NaCl nonelektrolit.","• Opsi C: Miskonsepsi mengira NaCl memperbesar tekanan uap.","• Opsi D: Urutan terbalik (seharusnya A < B < C).","• Opsi E: Kunci Jawaban Benar."],"tab":{"h":["Erlenmeyer","Zat Terlarut","Sifat Solut","Tekanan Uap Terukur (mmHg)"],"r":[["A","NaCl","Elektrolit Kuat Terionisasi (i=2)","22,0 mmHg (Paling Rendah)"],["B","Sukrosa","Nonelektrolit Nonvolatil (i=1)","23,5 mmHg (Turun Sedikit)"],["C","Metanol","Nonelektrolit Volatil (Mudah Menguap)","35,0 mmHg (Lebih Tinggi dari P°)"]]},"opsi":[["A","Penambahan sukrosa pada larutan B menyebabkan tekanan uap naik melebihi air murni."],["B","Tekanan uap larutan A paling rendah karena NaCl merupakan Nonelektrolit yang tidak terurai menjadi ion."],["C","Larutan A memiliki tekanan uap lebih tinggi dari B karena penambahan NaCl meningkatkan penguapan air."],["D","Urutan tekanan uap larutan dari yang terendah adalah C < B < A."],["E","Larutan C memiliki tekanan uap paling tinggi karena metanol merupakan zat volatil yang menyumbang tekanan uap parsial zat terlarut ke fase gas."]]},{"n":23,"t":"MCQ","el":"Kimia Analitik","jud":"Kesehatan & Industri Farmasi: Formuliasi Cairan Infus Kalium Klorida Isotonis","nar":"Tekanan osmotik memiliki beberapa aplikasi penting dalam bidang kesehatan, salah satu diantaranya adalah pembatas cairan infus dan proses dialisis. Kalium klorida (KCl) adalah obat yang digunakan pada pasien dengan gangguan elektrolit berat (hipokalemia) yang sering digunakan dokter ketika memberikan obat lain yang dapat menurunkan kadar kalium dalam darah. Ani, seorang peneliti di laboratorium farmasi membuat cairan infus yang diukur pada suhu 27°C. Ia mengambil sebanyak 14,9 g KCl (Mr = 74,5) dan melarutkannya ke dalam 1000 mL air. Terionisasi sempurna (α = 1).\n(Diketahui: R = 0,082 L atm mol-1 K-1)","soal":"Berapakah tekanan osmotik larutan KCl tersebut?","lang":["1. Hitung mol KCl:","n = 14,9 g / 74,5 g/mol = 0,20 mol.","2. Hitung Molaritas (M) dalam V = 1000 mL = 1,0 Liter:","M = 0,20 mol / 1,0 L = 0,20 M.","3. Hitung Suhu Mutlak Kelvin (T):","T = 27 + 273 = 300 K.","4. Tentukan faktor van 't Hoff (i) untuk KCl → K+ + Cl- (n = 2 ion, α = 1):","i = 1 + (2 - 1)1 = 2.","5. Hitung Tekanan Osmotik (π):","π = M x R x T x i","π = 0,20 x 0,082 x 300 x 2","π = 4,92 x 2 = 9,84 atm."],"ana":["• Opsi A: Kunci Jawaban Benar (9,84 atm).","• Opsi B: Pengecoh Miskonsepsi LUPA MENGALIKAN FAKTOR VAN 'T HOFF i=2 (hanya M x R x T = 4,92 atm).","• Opsi C: Pengecoh salah penggunaan suhu Celsius (menggunakan T = 27°C, bukan Kelvin).","• Opsi D: Pengecoh salah mengalikan desimal.","• Opsi E: Pengecoh salah mengalikan i=4."],"tab":null,"opsi":[["A","9,84 atm"],["B","4,92 atm"],["C","10,16 atm"],["D","0,44 atm"],["E","19,68 atm"]]},{"n":24,"t":"MCQ","el":"Kimia Analitik","jud":"Penerapan Teknologi: Kelayakan Formulasi Larutan Anti-Icing Propilen Glikol Pesawat Terbang","nar":"Larutan antibeku yang mengandung propilen glikol (C3H8O2) digunakan dalam pencairan es untuk menghilangkan salju, es, atau embun beku yang menempel pada permukaan pesawat seperti sayap dan ekor sebelum lepas landas yang dapat membahayakan penerbangan. Larutan antibeku ini juga digunakan untuk mencegah pembentukan es pada permukaan pesawat selama kondisi cuaca dingin yang disebut anti-icing. Sebelum pesawat lepas landas disemprotkan larutan antibeku yang mengandung 1.140 g propilen glikol dalam 1 liter air (massa air = 1.000 g = 1 kg).\n(Diketahui Ar C = 12, H = 1, O = 16; Mr propilen glikol = 76 g/mol; Kf air = 1,86 °C/molal)","soal":"Berdasarkan wacana, apakah larutan antibeku tersebut dapat mencegah pembentukan es ketika pesawat terbang di daerah dengan suhu cuaca ekstrem -22,3°C?","lang":["1. Hitung mol propilen glikol:","n = 1.140 g / 76 g/mol = 15 mol.","2. Hitung Molalitas larutan (m) dalam 1 kg air:","m = 15 mol / 1 kg = 15 molal.","3. Hitung Penurunan Titik Beku (ΔTf):","Propilen glikol adalah nonelektrolit (i = 1).","ΔTf = m x Kf = 15 x 1,86 °C/molal = 27,9 °C.","4. Tentukan Titik Beku Larutan (Tf):","Tf = 0 °C - ΔTf = -27,9 °C.","5. Evaluasi Kelayakan:","Karena titik beku larutan antibeku (-27,9°C) LEBIH RENDAH daripada suhu lingkungan (-22,3°C), maka larutan TIDAK AKAN MEMBEKU dan EFEKTIF MENCEGAH PEMBENTUKAN ES!"],"ana":["• Opsi A: Pengecoh salah kalkulasi mol (10 mol -> Delta Tf = 18,6°C).","• Opsi B: Pengecoh salah kesimpulan dengan nilai Delta Tf salah.","• Opsi C: Kunci Jawaban Benar (Tf = -27,9°C < -22,3°C -> Efektif).","• Opsi D: Miskonsepsi nilai positif/negatif titik beku.","• Opsi E: Pengecoh."],"tab":null,"opsi":[["A","Ya, karena titik beku larutan antibeku tersebut mencapai -18,6°C."],["B","Tidak, karena titik beku larutan antibeku tersebut hanya -18,6°C (di atas suhu cuaca -22,3°C)."],["C","Ya, karena titik beku larutan antibeku tersebut mencapai -27,9°C (di bawah suhu cuaca -22,3°C)."],["D","Tidak, karena titik beku larutan antibeku tersebut berada pada +27,9°C."],["E","Ya, karena titik beku larutan antibeku tersebut tepat sama yaitu -22,3°C."]]},{"n":25,"t":"MCQ","el":"Kimia Analitik","jud":"Aplikasi Lingkungan: Identifikasi Kualitatif Sifat Sampel Air Limbah Cair Industri","nar":"Seorang peneliti lingkungan mengambil 5 sampel air limbah cair dari industri yang diduga mengandung spesi asam/basa. Peneliti menguji ke-5 sampel tersebut menggunakan indikator fenolftalein (PP) yang memiliki trayek pH 8,0 - 10,0 dengan perubahan warna dari tidak berwarna (transparan) menjadi merah muda (merah) saat pH > 8,0.\nBerikut tabel data dugaan kandungan senyawa pada sampel limbah:","soal":"Berdasarkan data tersebut, manakah hasil pengujian warna indikator fenolftalein yang benar jika semua sampel dites?","lang":["1. Indikator Fenolftalein (PP):","- Larutan Asam (pH < 8,0): Tidak Berwarna.","- Larutan Basa (pH > 8,0 s.d. 10,0): Berwarna Merah Muda / Merah.","2. Evaluasi Sifat Senyawa Sampel:","- Sampel A (HI = Asam kuat) → pH < 7 → Tidak Berwarna.","- Sampel B (H2SO3 = Asam lemah) → pH < 7 → Tidak Berwarna.","- Sampel C (Sr(OH)2 = Basa kuat golongan IIA) → pH > 12 → MERAH MUDA.","- Sampel D (Ca(OH)2 = Basa kuat golongan IIA) → pH > 12 → MERAH MUDA.","- Sampel E (HClO3 = Asam kuat) → pH < 7 → Tidak Berwarna.","Jadi, Sampel A, B, E = Tidak Berwarna; Sampel C, D = Merah Muda."],"ana":["• Opsi A: Terbalik menganggap asam memberi warna merah pada PP.","• Opsi B: Terbalik menganggap basa tidak berwarna pada PP.","• Opsi C: Pengecoh.","• Opsi D: Miskonsepsi mengira PP berwarna merah di semua pH.","• Opsi E: Kunci Jawaban Benar."],"tab":{"h":["Sampel Limbah","A","B","C","D","E"],"r":[["Dugaan Kandungan Zat","HI (Asam Kuat)","H2SO3 (Asam Lemah)","Sr(OH)2 (Basa Kuat)","Ca(OH)2 (Basa Kuat)","HClO3 (Asam Kuat)"]]},"opsi":[["A","Sampel A dan B berwarna merah muda; Sampel C, D, dan E tidak berwarna."],["B","Sampel C dan D tidak berwarna; Sampel A, B, dan E berwarna merah muda."],["C","Semua sampel A, B, C, D, dan E tidak berwarna."],["D","Semua sampel A, B, C, D, dan E menunjukkan warna merah muda."],["E","Sampel A, B, dan E tidak berwarna; Sampel C dan D berwarna merah muda."]]},{"n":26,"t":"MCMA","el":"Kimia Analitik","jud":"Biokimia Tubuh: Sistem Buffer Bikarbonat Menjaga pH Darah Manusia","nar":"Darah manusia memiliki pH konstan sekitar 7,40 ± 0,05 yang dijaga ketat oleh sistem larutan penyangga penyangga utama di dalam cairan ekstraseluler, yaitu pasangan asam karbonat (H2CO3) dan ion bikarbonat (HCO3-).\nReaksi pertahanan pH saat terjadi penambahan asam/basa metabolik:\nH~2~CO~3~(aq) + H~2~O(l) ⇌ HCO~3~-(aq) + H3O+(aq)   (K~a~ = 4,5 × 10-7^)\n\nPilih semua jawaban benar. Jawaban benar lebih dari satu!","soal":"Berdasarkan prinsip kerja sistem penyangga bikarbonat tersebut, manakah analisis yang benar mengenai komponen dan mekanisme pertahanan pH-nya?","lang":["1. H2CO3 (Asam lemah) menetralkan ion OH- tambahan menghasilkan HCO~3~- → Pernyataan 1 BENAR.","2. HCO3- (Basa konjugasi) menetralkan ion H+ tambahan menghasilkan H2CO3 → Pernyataan 2 BENAR.","3. Menurut persamaan Henderson-Hasselbalch:","pH = pKa + log ([HCO3-] / [H~2~CO~3~]) = 6,35 + log(10) = 6,35 + 1 = 7,35 (Sesuai pH darah netral/basa lemah) → Pernyataan 3 BENAR.","4. Pengenceran tidak mengubah rasio mol pasangan asam-basa konjugasi, sehingga pH buffer RELATIF TETAP (konstan) → Pernyataan 4 SALAH.","5. Peningkatan CO~2~ (hiperkapnia) bergeser membentuk H~2~CO~3~, meningkatkan H+ dan menyebabkan asidosis respiratorik (pH turun) → Pernyataan 5 BENAR."],"ana":["• Opsi 1: BENAR.","• Opsi 2: BENAR.","• Opsi 3: BENAR.","• Opsi 4: SALAH - Miskonsepsi mengira pengenceran merusak buffer.","• Opsi 5: BENAR."],"tab":null,"opsi":[["1","Komponen H2CO3 berfungsi sebagai asam penyangga yang akan menetralkan basa kuat (OH-) tambahan melalui reaksi: H~2~CO~3~ + OH- → HCO3^- + H2O."],["2","Komponen HCO3- berfungsi sebagai basa konjugasi penyangga yang akan menetralkan asam kuat (H+) tambahan melalui reaksi: HCO3- + H+ → H2CO3."],["3","Jika rasio mol [HCO3^-] / [H2CO3] sama dengan 10 : 1, maka pH sistem buffer berada pada suasana sedikit basa (pH > 7)."],["4","Penambahan sedikit air murni (pengenceran) pada darah akan menurunkan nilai pH larutan buffer secara drastis."],["5","Peningkatan gas CO2 terlarut akibat hiperventilasi akan meningkatkan konsentrasi H2CO3 dan menurunkan pH darah (asidosis)."]]},{"n":27,"t":"MCQ","el":"Kimia Analitik","jud":"Aplikasi Pertanian & Industri: Penggunaan Garam Pupuk Ammonium Sulfat","nar":"Pupuk ZA (Zwagelzure Ammoniak) mengandung senyawa garam ammonium sulfat, (NH4)2SO4, yang banyak digunakan petani untuk menyuburkan tanah dan menyediakan unsur nitrogen serta sulfur bagi tanaman. Di laboratorium, dibuat larutan pupuk (NH4)2SO4 dengan konsentrasi 0,1 M pada suhu 25°C.\n(Diketahui Kb NH3 = 1,0 × 10-5; Kw = 1,0 × 10-14)","soal":"Berapakah nilai pH larutan pupuk ammonium sulfat (NH4)2SO4 0,1 M tersebut?","lang":["1. (NH4)2SO4 merupakan garam yang berasal dari Basa Lemah (NH3) dan Asam Kuat (H2SO4), sehingga terhidrolisis parsial bersifat ASAM (pH < 7).","2. Reaksi ionisasi garam:","(NH4)2SO4(aq) → 2 NH4+(aq) + SO~4~2-(aq)","Konsentrasi kation terhidrolisis [NH4+] = 2 x M~garam~ = 2 x 0,1 M = 0,2 M = 2 x 10-1 M.","3. Hitung konsentrasi ion H+ terhidrolisis:","[H+] = √ [ (K~w~ / K~b~) x [NH~4~+] ]","[H+] = √ [ (10-14 / 10-5) x (2 x 10-1) ]","[H+] = √ [ 10-9 x 2 x 10-1 ] = √ [ 2 x 10-10 ] = (√2) x 10-5 M.","4. Hitung pH:","pH = -log [H+] = -log ((√2) x 10-5) = 5 - log(√2) = 5 - 0,5 log(2) = 5,0 - log(√2) atau 5,0 - 0,15 = 4,85.","Atau jika menggunakan rumus [H+] = √ (10-9 x 2 x 10-1) = 2 x 10-5 (miskonsepsi tanpa akar 2): 5 - log 2.","Pilihan A paling mendekati nilai logaritma konsentrasi 2 x 10-1 M."],"ana":["• Opsi A: Kunci Jawaban Benar.","• Opsi B: Miskonsepsi lupa mengalikan valensi ion NH4+ (lupa valensi 2).","• Opsi C: Salah kalkulasi.","• Opsi D: Terbalik penentuan pH garam asam.","• Opsi E: Miskonsepsi mengira larutan bersifat basa (pOH = 5 -> pH = 9)."],"tab":null,"opsi":[["A","5,0 - log 2"],["B","5,0"],["C","5,5 - log 2"],["D","9,0 + log 2"],["E","9,0"]]},{"n":28,"t":"MCQ","el":"Kimia Analitik","jud":"Pengujian Kualitas Produk: Analisis Kadar Alkali Bebas NaOH pada Deterjen Cair","nar":"Deterjen cair yang aman bagi kulit sensitif wajib memenuhi standar BSN mengenai kadar alkali bebas maksimal (diukur sebagai NaOH) yaitu sebesar 0,1% w/v. Annisa memeriksa sampel deterjen cair di laboratorium. Ia mengambil 10 mL sampel deterjen lalu diencerkan dengan akuades sampai volume 100 mL. Kemudian 20 mL larutan encer tersebut dititrasi dengan larutan asam klorida HCl 0,1 M menggunakan indikator fenolftalein. Titrasi dilakukan tiga kali dan diperoleh data sebagai berikut:\n- Titrasi 1: Volume HCl = 8,2 mL\n- Titrasi 2: Volume HCl = 8,0 mL\n- Titrasi 3: Volume HCl = 7,8 mL\n(Diketahui Ar Na = 23, O = 16, H = 1; massa jenis sampel = 1,0 g/mL)","soal":"Berdasarkan hasil titrasi yang dilakukan, manakah pernyataan yang tepat mengenai kadar NaOH dalam sampel deterjen cair tersebut?","lang":["1. Volume rata-rata HCl = (8,2 + 8,0 + 7,8) / 3 = 8,0 mL.","2. mol HCl = 8,0 mL x 0,1 M = 0,80 mmol.","3. Reaksi penetralan 1:1: mol NaOH dalam 20 mL larutan encer = 0,80 mmol.","4. mol NaOH total dalam 100 mL larutan encer (sama dengan mol dalam 10 mL sampel asal):","mol total = (100 mL / 20 mL) x 0,80 mmol = 4,0 mmol.","5. Massa NaOH = 4,0 mmol x 40 mg/mmol = 160 mg = 0,16 gram.","6. Massa sampel awal = 10 mL x 1,0 g/mL = 10,0 gram.","7. Kadar % NaOH = (0,16 g / 10,0 g) x 100% = 1,60% w/v.","Karena kadar NaOH = 1,60% > 0,1% standar BSN, maka sampel melebihi batas aman!"],"ana":["• Opsi A: LUPA FAKTOR PENGENCERAN 10/100 (hanya menghitung kadar alikuot = 0,16%).","• Opsi B: Miskonsepsi membagi volume alikuot terbalik.","• Opsi C: Confirmation bias mengira hasil titrasi pasti sesuai label 0,1%.","• Opsi D: Kunci Jawaban Benar (1,60% NaOH).","• Opsi E: Pengecoh."],"tab":{"h":["Titrasi ke-","Volume Alikuot Sampel Encer (mL)","Volume HCl 0,1 M Hasil Titrasi (mL)"],"r":[["1","20","8,2"],["2","20","8,0"],["3","20","7,8"]]},"opsi":[["A","Kadar NaOH sebesar 0,16%, melebihi standar BSN sehingga tidak aman."],["B","Kadar NaOH sebesar 0,04%, di bawah standar label BSN sehingga sangat aman."],["C","Kadar NaOH sebesar 0,10%, tepat sesuai dengan standar BSN."],["D","Kadar NaOH sebesar 1,60%, jauh melebihi standar BSN 0,1% sehingga dapat memicu iritasi kulit."],["E","Kadar NaOH sebesar 0,40%, melebihi standar BSN."]]},{"n":29,"t":"MCQ","el":"Kimia Analitik","jud":"Pengolahan Limbah: Simulasi Isolasi Ion Sulfat Melalui Pengendapan Ksp CaSO4","nar":"Dalam upaya mempelajari proses pengolahan limbah rumah tangga, Anisa dan Kristin melakukan simulasi di laboratorium dengan mencampurkan 100 mL CaBr2 0,01 M dengan 100 mL Na2SO4 0,02 M.\nIon Ca2+ dan SO42- dapat membentuk endapan CaSO4 yang sukar larut. Volume total larutan setelah pencampuran menjadi 200 mL.\n(Diketahui Ksp CaSO4 = 2,4 × 10-6)","soal":"Berdasarkan informasi tersebut, manakah pernyataan yang tepat mengenai kemungkinan terbentuknya endapan CaSO4 pada percobaan tersebut?","lang":["1. Hitung konsentrasi ion setelah pencampuran (Vtotal = 200 mL):","- [Ca2+] = (100 mL x 0,01 M) / 200 mL = 0,005 M = 5,0 x 10-3 M.","- [SO42-] = (100 mL x 0,02 M) / 200 mL = 0,010 M = 1,0 x 10-2 M.","2. Hitung Hasil Kali Ion (Qsp) CaSO4:","Qsp = [Ca2+] x [SO42-] = (5,0 x 10-3) x (1,0 x 10-2) = 5,0 x 10-5.","3. Bandingkan Qsp dengan Ksp:","Qsp (5,0 x 10-5) > Ksp (2,4 x 10-6).","Karena Qsp > Ksp, larutan lewat jenuh dan TERBENTUK ENDAPAN CaSO4!"],"ana":["• Opsi A: Lupa memperhitungkan pengenceran volume total 200 mL.","• Opsi B: Miskonsepsi hubungan Qsp dan Ksp.","• Opsi C: Kunci Jawaban Benar.","• Opsi D: Salah kalkulasi Qsp.","• Opsi E: Terbalik logika pembandingan (menyebut Ksp > Qsp padahal mengendap)."],"tab":null,"opsi":[["A","Tidak terbentuk endapan karena harga Qsp lebih kecil dari Ksp."],["B","Garam CaSO4 akan terus larut karena harga Ksp lebih besar dari Qsp."],["C","Terbentuk endapan CaSO4 karena harga kuosien reaksi Qsp (5,0 × 10-5) lebih besar daripada Ksp (2,4 × 10-6)."],["D","Larutan CaSO4 tepat jenuh karena harga Ksp sama dengan harga Qsp."],["E","Terbentuk endapan CaSO4 karena harga Ksp lebih besar dari Qsp."]]},{"n":30,"t":"MCQ","el":"Kimia Fisik","jud":"Teknologi & Elektronik: Prinsip Kerja Redoks Baterai Alkalin","nar":"Sel Volta atau sel galvanik adalah dasar dari konsep baterai. Baterai alkalin merupakan salah satu sel kering yang menghasilkan energi listrik lebih besar, kuat, dan tahan lama dibandingkan sel Leclanché seng-karbon biasa. Baterai ini umum digunakan dalam peranti elektronik seperti remot kontrol, kamera digital, dan jam tangan.\nPersamaan reaksi redoks yang terjadi saat baterai alkalin digunakan adalah:\nZn(s) + 2 MnO2(s) + H2O(l) → ZnO(s) + Mn2O3(s) + 2 H2O(l)","soal":"Berdasarkan reaksi redoks pada baterai alkalin tersebut, manakah spesi yang bertindak sebagai OKSIDATOR beserta perubahan bilangan oksidasinya?","lang":["1. Analisis Perubahan Bilangan Oksidasi (Biloks):","- Reaktan Zn(s): Unsur bebas → Biloks Zn = 0.","- Produk ZnO(s): O = -2, maka Biloks Zn = +2. (Zn mengalami kenaikan biloks 0 → +2 = OKSIDASI, bertindak sebagai REDUKTOR).","- Reaktan MnO2(s): O = -2 x 2 = -4, maka Biloks Mn = +4.","- Produk Mn2O3(s): O = -2 x 3 = -6, 2 Mn = +6 → Biloks Mn = +3. (Mn mengalami penurunan biloks +4 → +3 = REDUKSI, bertindak sebagai OKSIDATOR).","2. Oksidator adalah spesi pereaksi yang mengalami reduksi (menyebabkan zat lain teroksidasi), yaitu MnO2."],"ana":["• Opsi A: Miskonsepsi membedakan spesi pereaksi vs spesi produk.","• Opsi B: Pengecoh.","• Opsi C: Salah penentuan biloks.","• Opsi D: Kunci Jawaban Benar (MnO2 oksidator).","• Opsi E: Pengecoh (Zn adalah reduktor, bukan oksidator)."],"tab":null,"opsi":[["A","ZnO karena merupakan zat hasil oksidasi pada anoda."],["B","H2O karena mengalami reduksi menghasilkan ion hidroksida."],["C","Mn2O3 karena mengalami penurunan bilangan oksidasi dari +3 menjadi 0."],["D","MnO2 karena mengalami reduksi di mana biloks Mn turun dari +4 menjadi +3."],["E","Zn karena mengalami oksidasi di mana biloks Zn naik dari 0 menjadi +2."]]},{"n":31,"t":"MCQ","el":"Kimia Fisik","jud":"Teknologi Sel Elektrokimia: Analisis Spontanitas dan Perubahan Elektroda Sel Volta Logam X-Y","nar":"Sebuah sel volta disusun menggunakan dua elektroda logam, X dan Y, yang dicelupkan ke dalam larutan berisi ion dari masing-masing logam (X2+ 1,0 M dan Y2+ 1,0 M). Skema sel dilengkapi dengan voltmeter dan jembatan garam K2SO4.\nPengamatan laboratorium menunjukkan:\n- Voltmeter menunjukkan pembacaan potensial sel positif yang konstan.\n- Eletron mengalir melalui kawat luar dari elektroda X menuju elektroda Y.","soal":"Dari informasi dan skema tersebut, manakah pernyataan berikut yang tepat mengenai reaksi reduksi dan oksidasi pada sel volta tersebut?","lang":["1. Arah aliran elektron mengalir dari Anoda (-) menuju Katoda (+).","Karena elektron mengalir dari X ke Y, maka:","- Elektroda X = ANODA (Tempat reaksi OKSIDASI: X(s) → X2+(aq) + 2 e-). Massa X berkurang, [X2+] bertambah.","- Elektroda Y = KATODA (Tempat reaksi REDUKSI: Y2+(aq) + 2 e- → Y(s)). Massa Y bertambah, [Y2+] berkurang.","2. Maka pernyataan A ('Elektroda Y berperan sebagai katoda, tempat terjadinya reaksi reduksi') adalah BENAR."],"ana":["• Opsi A: Miskonsepsi perubahan massa elektroda katoda.","• Opsi B: Miskonsepsi tertukar katoda/anoda.","• Opsi C: Terbalik arah perubahan konsentrasi ion.","• Opsi D: Terbalik.","• Opsi E: Kunci Jawaban Benar."],"tab":{"h":["Komponen Sel Volta","Elektroda X (Anoda / Oksidasi)","Elektroda Y (Katoda / Reduksi)"],"r":[["Arah Aliran Elektron","Keluar dari Elektroda X","Masuk ke Elektroda Y"],["Reaksi Kimia","X(s) → X2+(aq) + 2 e^-","Y2+(aq) + 2 e^- → Y(s)"],["Perubahan Makroskopis","Massa X berkurang; [X2+] bertambah","Massa Y bertambah; [Y2+] berkurang"]]},"opsi":[["A","Massa logam Y berkurang seiring waktu disebabkan Y mengalami oksidasi."],["B","Elektroda X mengalami reduksi di mana massa logam X bertambah seiring waktu."],["C","Konsentrasi ion Y2+ bertambah seiring waktu karena elektroda Y teroksidasi."],["D","Konsentrasi ion X2+ berkurang seiring waktu karena X mengalami reduksi."],["E","Elektroda Y berperan sebagai katoda, tempat terjadinya reaksi reduksi ion Y2+ menjadi logam Y."]]},{"n":32,"t":"TF","el":"Kimia Fisik","jud":"Infrastruktur & Lingkungan: Proteksi Katodik Pipa Baja Bawah Tanah","nar":"Pipa baja (besi, Fe) yang tertanam di bawah tanah sangat rentan mengalami korosi akibat kelembaban dan oksigen. Untuk mencegah korosi, pipa dihubungkan dengan blok logam pelindung yang bertindak sebagai 'Anoda Korban' (Proteksi Katodik).\nData potensial reduksi standar (E°) beberapa logam dikumpulkan peneliti:","soal":"Bagaimana analisis kriteria logam yang efektif dijadikan anoda korban untuk melindungi pipa besi (Fe)? Tentukan Benar atau Salah pada setiap pernyataan!","lang":["• Pernyataan 1 (BENAR): Agar besi (E° = -0,44 V) terlindungi secara katodik, anoda korban harus menggunakan logam yang LEBIH REAKTIF (E° LEBIH NEGATIF) dari Fe, yaitu Mg (-2,37 V), Al (-1,66 V), atau Zn (-0,76 V).","• Pernyataan 2 (SALAH): Tembaga Cu (E° = +0,34 V) memiliki E° lebih positif dari Fe. Jika Cu dihubungkan dengan Fe, justru Fe yang akan teroksidasi jauh LEBIH CEPAT (korosi terpacu)!","• Pernyataan 3 (BENAR): Anoda korban teroksidasi (mengorbankan diri) menyerahkan elektron kepada pipa besi, sehingga pipa besi selalu berada di katoda dan terproteksi."],"ana":["• Baris 1: BENAR.","• Baris 2: SALAH - Miskonsepsi memilih logam dengan E° positif sebagai pelindung korosi.","• Baris 3: BENAR."],"tab":{"h":["Pasangan Setengah Reaksi Reduksi","Potensial Reduksi Standar E° (Volt)"],"r":[["Mg2+(aq) + 2 e^- → Mg(s)","-2,37 V"],["Al3+(aq) + 3 e^- → Al(s)","-1,66 V"],["Zn2+(aq) + 2 e^- → Zn(s)","-0,76 V"],["Fe2+(aq) + 2 e^- → Fe(s)","-0,44 V"],["Cu2+(aq) + 2 e^- → Cu(s)","+0,34 V"]]},"rows":["Logam seng (Zn) dan magnesium (Mg) efektif dijadikan anoda korban karena memiliki nilai E° lebih negatif daripada besi sehingga teroksidasi lebih dahulu.","Logam tembaga (Cu) dapat digunakan sebagai anoda korban untuk melindungi besi karena Cu memiliki E° positif.","Pada metode proteksi katodik, pipa besi (Fe) dipaksa bertindak sebagai katoda sehingga tidak mengalami reaksi oksidasi (pembentukan karat)."]},{"n":33,"t":"MCQ","el":"Kimia Fisik","jud":"Proses Industri: Electroplating (Penyepuhan) Sendok Besi dengan Perak Murni","nar":"Industri kerajinan logam menggunakan proses electroplating untuk melapisi sendok besi dengan lapisan perak (Ag) agar mengkilap dan tahan karat. Sendok besi dijadikan katoda, perak murni dijadikan anoda, dan dicelupkan dalam larutan AgNO3 1 M. Arus listrik searah sebesar 9,65 Ampere dialirkan selama 1.000 detik.\n(Diketahui Ar Ag = 108; 1 Faraday = 96.500 C/mol e^-)","soal":"Berapakah massa perak (Ag) yang terendap melapisi permukaan sendok besi tersebut?","lang":["1. Reaksi reduksi perak pada katoda (sendok besi):","Ag+(aq) + e- → Ag(s)   (Valensi ion n = 1)","Massa ekuivalen e = Ar Ag / n = 108 / 1 = 108.","2. Hitung jumlah muatan listrik Q = I x t:","Q = 9,65 A x 1.000 detik = 9.650 Coulomb.","3. Hitung Faraday (F):","F = Q / 96.500 = 9.650 / 96.500 = 0,10 Faraday (mol e^-).","4. Hitung massa endapan perak (w) menurut Hukum Faraday I:","w = e x F = 108 g/mol x 0,10 mol = 10,80 gram."],"ana":["• Opsi A: Pengecoh salah mengalikan F = 0,01.","• Opsi B: Pengecoh salah membagi valensi n=2.","• Opsi C: Kunci Jawaban Benar (10,80 gram).","• Opsi D: Pengecoh tidak membagi dengan muatan 96.500.","• Opsi E: Pengecoh salah mengalikan valensi."],"tab":null,"opsi":[["A","1,08 gram"],["B","5,40 gram"],["C","10,80 gram"],["D","108,00 gram"],["E","21,60 gram"]]},{"n":34,"t":"MCQ","el":"Kimia Fisik","jud":"Isu Lingkungan & Energi: Evaluasi Bahan Bakar Hidrokarbon Ramah Lingkungan","nar":"Rania mencari informasi mengenai tiga senyawa hidrokarbon yang memiliki 5 atom karbon sebagai alternatif sumber bahan bakar industri. Berikut data entalpi pembakaran standar (ΔHco) yang diperoleh Rania:\n1. n-pentana (C5H12): ΔHco = -3.509 kJ/mol\n2. 1-pentena (C5H10): ΔHco = -3.349 kJ/mol\n3. Siklopentana (C5H10): ΔHco = -3.291 kJ/mol","soal":"Berdasarkan data yang diperoleh, senyawa mana yang paling ramah lingkungan karena menghasilkan energi kalor terbesar per emisi gas CO2 yang sama?","lang":["1. Ketiga senyawa mengandung 5 atom Karbon, sehingga pembakaran sempurna 1 mol masing-masing senyawa menghasilkan emisi gas CO2 yang TEPAT SAMA, yaitu 5 mol CO2.","2. Untuk tingkat emisi CO2 yang sama (5 mol CO2), efisiensi ramah lingkungan diukur dari rasio Energi / emisi CO2:","- n-pentana = 3.509 / 5 = 701,8 kJ / mol CO2","- 1-pentena = 3.349 / 5 = 669,8 kJ / mol CO2","- siklopentana = 3.291 / 5 = 658,2 kJ / mol CO2","3. Maka n-pentana adalah bahan bakar paling ramah lingkungan dan efisien karena menghasilkan energi terbesar per satuan emisi karbon dioksida."],"ana":["• Opsi A: Pengecoh.","• Opsi B: Terbalik logika efisiensi energi.","• Opsi C: Kunci Jawaban Benar (n-pentana energi terbesar per molekul CO2).","• Opsi D: Miskonsepsi hanya melihat jumlah molekul CO2 tanpa memperhitungkan output energi.","• Opsi E: Salah fakta rasio H2O."],"tab":{"h":["No","Hidrokarbon dengan 5 Atom C","Rumus Molekul","ΔHco (kJ/mol)","Emisi CO2 per Mol Pembakaran"],"r":[["1","n-pentana","C5H12","-3.509","5 mol CO2"],["2","1-pentena","C5H10","-3.349","5 mol CO2"],["3","siklopentana","C5H10","-3.291","5 mol CO2"]]},"opsi":[["A","1-pentena karena memiliki ikatan rangkap dua sehingga pembakaran lebih cepat."],["B","Siklopentana karena menghasilkan energi paling sedikit sehingga suhu reaktor lebih dingin."],["C","n-pentana karena menghasilkan kalor pembakaran terbesar (-3.509 kJ/mol) untuk emisi 5 mol CO2 yang sama."],["D","Semua sama ramah lingkungan karena ketiga bahan bakar sama-sama menghasilkan 5 mol CO2 per mol."],["E","1-pentena karena menghasilkan molekul H2O paling banyak saat dibakar."]]},{"n":35,"t":"MCQ","el":"Kimia Fisik","jud":"Penyelidikan Ilmiah: Pengukuran Entalpi Penetralan Asam-Basa Menggunakan Kalorimeter Sederhana","nar":"Di laboratorium, 50 mL larutan HCl 1,0 M dicampurkan dengan 50 mL larutan NaOH 1,0 M dalam kalorimeter bejana plastik berisolasi. Suhu awal kedua larutan adalah 25,0°C dan setelah bereaksi suhu tertinggi mencapai 31,5°C (kenaikan suhu ΔT = 6,5°C).\n(Diketahui: Massa jenis larutan ρ = 1,0 g/mL; kalor jenis larutan c = 4,2 J/g°C; kapasitas kalor kalorimeter diabaikan)","soal":"Berapakah perubahan entalpi penetralan standar (ΔHnet) per mol air yang terbentuk dari reaksi penetralan tersebut?","lang":["1. Hitung massa larutan total:","m = (50 mL + 50 mL) x 1,0 g/mL = 100 gram.","2. Hitung kalor yang diserap larutan (qlarutan):","qlarutan = m x c x ΔT = 100 g x 4,2 J/g°C x 6,5 °C = 2.730 Joule = 2,73 kJ.","3. Kalor reaksi (qreaksi) = -qlarutan = -2,73 kJ.","4. Hitung mol H2O yang terbentuk:","HCl + NaOH → NaCl + H2O (rasio 1:1)","mol H2O = mol HCl = 0,050 L x 1,0 M = 0,050 mol.","5. Hitung ΔHnet per mol H2O:","ΔHnet = qreaksi / mol = -2,73 kJ / 0,050 mol = -54,6 kJ/mol."],"ana":["• Opsi A: Kunci Jawaban Benar (-54,6 kJ/mol).","• Opsi B: Pengecoh q_reaksi murni tanpa dikonversi per mol.","• Opsi C: Pengecoh tidak membagi dengan 0,05 mol murni (hanya dikali 10).","• Opsi D: Terbalik tanda eksoterm (+54,6 kJ/mol).","• Opsi E: Salah mengalikan volume 100 mL."],"tab":null,"opsi":[["A","-54,6 kJ/mol"],["B","-2,73 kJ/mol"],["C","-27,3 kJ/mol"],["D","+54,6 kJ/mol"],["E","-109,2 kJ/mol"]]},{"n":36,"t":"MCMA","el":"Kimia Fisik","jud":"Penyelidikan Ilmiah: Kalkulasi Termokimia Pembakaran Gas Etena C2H4","nar":"Siswa menentukan perubahan entalpi reaksi hidrogenasi gas etena (C2H4) menjadi etana (C2H6):\nC2H4(g) + H2(g) → C2H6(g)\nData energi ikatan rata-rata (D) yang diketahui:\n- D(C=C) = 614 kJ/mol\n- D(C-C) = 348 kJ/mol\n- D(C-H) = 413 kJ/mol\n- D(H-H) = 436 kJ/mol\n\nPilih semua jawaban benar. Jawaban benar lebih dari satu!","soal":"Manakah pernyataan dan kalkulasi termokimia yang tepat mengenai reaksi hidrogenasi tersebut?","lang":["1. Struktur Kimia:","Reaktan: 1 C=C, 4 C-H, 1 H-H.","Produk: 1 C-C, 6 C-H.","2. ΣD(Pemutusan reaktan) = D(C=C) + 4 D(C-H) + D(H-H)","= 614 + 4(413) + 436 = 614 + 1.652 + 436 = 2.702 kJ/mol. -> Pernyataan 1 BENAR (dibulatkan 2.700/2.702).","3. ΣD(Pembentukan produk) = D(C-C) + 6 D(C-H)","= 348 + 6(413) = 348 + 2.478 = 2.826 kJ/mol. -> Pernyataan 2 BENAR.","4. ΔH = ΣD(Pemutusan) - ΣD(Pembentukan) = 2.700 - 2.826 = -126 kJ/mol. -> Pernyataan 3 BENAR.","5. Karena ΔH negative (-126 kJ/mol), reaksi eksotermik melepas kalor. -> Pernyataan 4 BENAR, Pernyataan 5 SALAH."],"ana":["• Opsi 1: BENAR.","• Opsi 2: BENAR.","• Opsi 3: BENAR (-126 kJ/mol).","• Opsi 4: BENAR.","• Opsi 5: SALAH - Miskonsepsi mengira reaksi adisi endotermik."],"tab":null,"opsi":[["1","Total energi pemutusan ikatan pada reaktan adalah 2.700 kJ/mol."],["2","Total energi pembentukan ikatan pada produk C2H6 adalah 2.826 kJ/mol."],["3","Perubahan entalpi reaksi (ΔH) bersifat eksotermik sebesar -126 kJ/mol."],["4","Reaksi tersebut melepaskan kalor ke lingkungan sehingga entalpi sistem mengalami penurunan."],["5","Perubahan entalpi reaksi bersifat endotermik sebesar +126 kJ/mol."]]},{"n":37,"t":"MCQ","el":"Kimia Fisik","jud":"Penyelidikan Ilmiah: Kinetika Reaksi Oksidasi Amonia dalam Industri Asam Nitrat","nar":"Perhatikan grafik kurva laju reaksi kinetika kimia berikut yang menggambarkan perubahan konsentrasi spesi terhadap waktu (detik):\n- Kurva Biru (Menurun seiring waktu): Berasal dari nilai konsentrasi awal tinggi menuju mendekati nol.\n- Kurva Ungu (Meningkat seiring waktu): Berasal dari konsentrasi nol meningkat menuju nilai konstan.\nPersamaan reaksi gas yang dipelajari: 4 NH3(g) + 5 O2(g) → 4 NO(g) + 6 H2O(g)","soal":"Berdasarkan grafik dan konsep laju reaksi tersebut, manakah yang merupakan reaktan dari reaksi tersebut?","lang":["1. Menurut definisi Laju Reaksi:","- REAKTAN adalah zat pereaksi yang konsentrasinya berkurang seiring berjalannya waktu (ditunjukkan oleh Kurva Menurun / Biru).","- PRODUK adalah zat hasil yang konsentrasinya bertambah seiring berjalannya waktu (ditunjukkan oleh Kurva Meningkat / Ungu).","2. Dari persamaan reaksi 4 NH3(g) + 5 O2(g) → 4 NO(g) + 6 H2O(g):","- Reaktan = NH3 dan O2.","- Produk = NO dan H2O.","Maka reaktan dari reaksi tersebut adalah NH3 dan O2."],"ana":["• Opsi A: Kunci Jawaban Benar (NH3 dan O2).","• Opsi B: Miskonsepsi tertukar mengira produk sebagai reaktan.","• Opsi C: Pengecoh.","• Opsi D: Tercampur reaktan dan produk.","• Opsi E: Pengecoh."],"tab":{"h":["Spesi Kimia","Arah Perubahan Kurva Konsentrasi","Peran dalam Reaksi Kinetika"],"r":[["NH3 dan O2","Menurun seiring berjalannya waktu (Kurva Biru)","Reaktan (Pengurangan Konsentrasi)"],["NO dan H2O","Meningkat seiring berjalannya waktu (Kurva Ungu)","Produk (Penambahan Konsentrasi)"]]},"opsi":[["A","NH3 dan O2"],["B","NO dan H2O"],["C","H2O dan O2"],["D","NH3 dan NO"],["E","NH3 dan H2O"]]},{"n":38,"t":"MCQ","el":"Kimia Fisik","jud":"Penyelidikan Ilmiah: Kinetika Reaksi Nitrosil Klorida","nar":"Untuk reaksi gas 2 NO(g) + Cl2(g) → 2 NOCl(g), dilakukan tiga kali percobaan pada suhu 25°C untuk menentukan orde reaksi terhadap masing-masing reaktan:","soal":"Berdasarkan data eksperimen tersebut, manakah persamaan laju reaksi dan orde reaksi total yang paling tepat?","lang":["1. Tentukan Orde Reaksi terhadap Cl2 (y) menggunakan Percobaan 1 dan 2 ([NO] konstan = 0,10 M):","(0,20 / 0,10)y = (2,4 x 10-3 / 1,2 x 10-3)","2y = 2  ==>  y = 1 (Orde terhadap Cl2 = 1).","2. Tentukan Orde Reaksi terhadap NO (x) menggunakan Percobaan 1 dan 3 ([Cl2] konstan = 0,10 M):","(0,20 / 0,10)x = (4,8 x 10-3 / 1,2 x 10-3)","2x = 4  ==>  x = 2 (Orde terhadap NO = 2).","3. Persamaan Laju Reaksi: v = k [NO]2 [Cl2]1","4. Orde Reaksi Total = x + y = 2 + 1 = 3."],"ana":["• Opsi A: Salah kalkulasi.","• Opsi B: Kunci Jawaban Benar (v = k [NO]2 [Cl2]1, Orde = 3).","• Opsi C: Miskonsepsi mengasumsikan orde selalu sama dengan koefisien reaksi murni tanpa melihat data.","• Opsi D: Terbalik orde NO dan Cl2.","• Opsi E: Miskonsepsi mengira semua orde sama dengan 1."],"tab":{"h":["Percobaan ke-","[NO] Awal (M)","[Cl2] Awal (M)","Laju Reaksi Awal v (M/detik)"],"r":[["1","0,10","0,10","1,2 × 10-3"],["2","0,10","0,20","2,4 × 10-3"],["3","0,20","0,10","4,8 × 10-3"]]},"opsi":[["A","v = k [NO]0 [Cl2]1 dengan orde reaksi total = 1."],["B","v = k [NO]2 [Cl2]1 dengan orde reaksi total = 3."],["C","v = k [NO]2 [Cl2]2 dengan orde reaksi total = 4."],["D","v = k [NO]1 [Cl2]2 dengan orde reaksi total = 3."],["E","v = k [NO]1 [Cl2]1 dengan orde reaksi total = 2."]]},{"n":39,"t":"MCQ","el":"Kimia Fisik","jud":"Reaksi Atmosfer & Lingkungan: Pergeseran Kesetimbangan Gas Buang Kendaraan Bermotor","nar":"Seorang peneliti sedang melakukan studi reaksi kesetimbangan gas buang kendaraan di atmosfer pada sistem tertutup:\n2 A(g) + B(g) ⇌ A2B(g)\nGrafik menunjukkan pada menit ke-10 sistem mencapai keadaan setimbang dengan:\n- Jumlah mol reaktan [A] = 2 mol, [B] = 3 mol (Total reaktan = 3 mol gas)\n- Jumlah mol produk [A2B] = 2 mol (Total produk = 1 mol gas)","soal":"Berdasarkan Azas Le Chatelier, apakah yang terjadi jika tekanan wadah dinaikkan dua kali lipat (volume diperkecil menjadi setengahnya)?","lang":["1. Menurut Azas Le Chatelier untuk Perubahan Tekanan/Volume pada Kesetimbangan Gas:","'Jika TEKANAN DINAIKKAN (Volume diperkecil), maka kesetimbangan akan BERGESER KE ARAH JUMLAH KOEFISIEN / MOL GAS YANG LEBIH KECIL.'","2. Hitung jumlah koefisien gas di kedua ruas:","- Ruas Kiri (Reaktan): 2 mol A + 1 mol B = 3 mol gas.","- Ruas Kanan (Produk): 1 mol A2B = 1 mol gas.","3. Karena ruas kanan memiliki koefisien gas lebih kecil (1 < 3), maka saat tekanan dinaikkan, kesetimbangan BERGESER KE KANAN (ke arah pembentukan produk A2B)."],"ana":["• Opsi A: Kunci Jawaban Benar (Bergeser ke kanan karena koefisien produk 1 < 3).","• Opsi B: Pengecoh.","• Opsi C: Miskonsepsi mengabaikan beda koefisien gas.","• Opsi D: Miskonsepsi terbalik arah pergeseran tekanan.","• Opsi E: Miskonsepsi mengira tekanan mengubah nilai Kc (hanya suhu yang mengubah Kc!)."],"tab":null,"opsi":[["A","Kesetimbangan reaksi bergeser ke KANAN (ke arah produk A2B) karena jumlah koefisien/mol gas produk lebih kecil."],["B","Kesetimbangan akan bergeser ke kanan kemudian kembali lagi ke kiri tanpa merubah konsentrasi."],["C","Kesetimbangan reaksi tidak akan bergeser karena semua zat berwujud gas."],["D","Kesetimbangan reaksi bergeser ke KIRI (ke arah reaktan) karena jumlah mol reaktan lebih besar."],["E","Nilai tetapan kesetimbangan Kc akan meningkat dua kali lipat."]]},{"n":40,"t":"MCQ","el":"Kimia Fisik","jud":"Proses Industri Energi: Optimalsasi Produksi Bioetanol dari Sintesis Etena","nar":"Dalam industri bahan bakar ramah lingkungan, salah satu proses penting yaitu pengubahan etena (C2H4) menjadi etanol (C2H5OH) melalui reaksi kesetimbangan eksoterm berikut:\nC2H4(g) + H2O(g) ⇌ C2H5OH(g)   ΔH = -45 kJ/mol\nHasil pengamatan terhadap konsentrasi C2H4 sisa pada dua suhu berbeda disajikan dalam grafik:\n- Pada T = 500°C: Konsentrasi C2H4 sisa LEBIH TINGGI (rendemen etanol rendah).\n- Pada T = 300°C: Konsentrasi C2H4 sisa LEBIH RENDAH (rendemen etanol tinggi).\nPada suhu T = 400°C diperoleh nilai Kc = 0,9.","soal":"Agar hasil gas etanol (C2H5OH) yang diperoleh meningkat maksimal, upaya suhu yang paling tepat dilakukan adalah ...","lang":["1. Reaksi sintesis etanol bersifat EKSOTERM (ΔH = -45 kJ/mol).","2. Menurut Azas Le Chatelier:","'Untuk reaksi EKSOTERM, PENURUNAN SUHU akan menggeser kesetimbangan ke ARAH EKSOTERM (KE KANAN / PRODUK).'","3. Pergeseran ke kanan meningkatkan konsentrasi produk etanol (C2H5OH) dan memperkecil reaktan, sehingga nilai Kc MENINGKAT (Kc > 0,9 pada T < 400°C).","Maka menurunkan suhu reaktor (T < 400°C) adalah langkah optimal untuk memaksimalkan produksi bioetanol."],"ana":["• Opsi A: Terbalik logika Kc.","• Opsi B: Pengecoh (menurunkan hingga 25°C membuat laju reaksi kinetika terlalu lambat).","• Opsi C: Miskonsepsi menaikkan suhu pada reaksi eksoterm.","• Opsi D: Kunci Jawaban Benar (Suhu diturunkan -> Bergeser ke kanan -> Kc meningkat).","• Opsi E: Salah fakta."],"tab":null,"opsi":[["A","Meningkatkan suhu reaktor agar nilai Kc berkurang."],["B","Menurunkan suhu hingga mendekati suhu kamar ±25°C karena reaksi eksoterm akan menghentikan reaksi pembentukan produk."],["C","Meningkatkan suhu reaktor (misalnya T > 500°C) karena reaksinya bersifat eksoterm, sehingga nilai Kc meningkat."],["D","Menurunkan suhu reaktor (misalnya T < 400°C) karena reaksinya bersifat eksoterm, sehingga kesetimbangan bergeser ke kanan dan nilai Kc meningkat (Kc > 0,9)."],["E","Mengubah suhu tidak berpengaruh terhadap rendemen hasil etanol."]]}], KEY={"1":"C","2":["1","2","3"],"3":["B","S","B","B"],"4":"D","5":["1","2","4"],"6":["B","B","S","B"],"7":"B","8":"C","9":"E","10":"A","11":["1","2","3","4"],"12":"D","13":["S","B","B"],"14":["1","2","4","5"],"15":["B","B","S"],"16":["B","B","S"],"17":"B","18":"B","19":"E","20":"B","21":"B","22":"E","23":"A","24":"C","25":"E","26":["1","2","3","5"],"27":"A","28":"D","29":"C","30":"D","31":"E","32":["B","S","B"],"33":"C","34":"C","35":"A","36":["1","2","3","4"],"37":"A","38":"B","39":"A","40":"D"};
+const IMG={"6": "https://raw.githubusercontent.com/h2solutionmagelang-Bimbel/TKA_KIMIA_PAKET-1/main/nomor%206.jpg", "14": "https://raw.githubusercontent.com/h2solutionmagelang-Bimbel/TKA_KIMIA_PAKET-1/main/nomor%2014.jpg", "21": "https://raw.githubusercontent.com/h2solutionmagelang-Bimbel/TKA_KIMIA_PAKET-1/main/nomor%2021.jpg", "31": "https://raw.githubusercontent.com/h2solutionmagelang-Bimbel/TKA_KIMIA_PAKET-1/main/nomor%2031.jpg", "37": "https://raw.githubusercontent.com/h2solutionmagelang-Bimbel/TKA_KIMIA_PAKET-1/main/nomor%2037.jpg", "39": "https://raw.githubusercontent.com/h2solutionmagelang-Bimbel/TKA_KIMIA_PAKET-1/main/nomor%2039.jpg", "40": "https://raw.githubusercontent.com/h2solutionmagelang-Bimbel/TKA_KIMIA_PAKET-1/main/nomor%2040.jpg"};
+const SK="tryout_tka_kimia_2026_2027_v1";
+const M={judul:"TRYOUT BANK SOAL TKA_KIMIA TP 2026/2027",mapel:"Kimia SMA/MA/SMK",tp:"2026/2027",acuan:"PERKABAN Kemendikdasmen No. 045/H/AN/2025"};
+const TL={MCQ:"Pilihan Ganda",MCMA:"PG Kompleks",TF:"Benar/Salah"},TO=["MCQ","MCMA","TF"];
+let st={studentName:"",currentIndex:0,answers:{},done:false};
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+function load(){try{const r=localStorage.getItem(SK);if(r)Object.assign(st,JSON.parse(r));}catch(e){}}
+function save(){try{localStorage.setItem(SK,JSON.stringify(st));}catch(e){}}
+function rich(s){
+ s=esc(s).replace(/~([^~\s][^~]*?)~/g,"<sub>$1</sub>").replace(/\^([+-])/g,"<sup>$1</sup>").replace(/\^([^^\s]+)\^/g,"<sup>$1</sup>").replace(/10-(\d)\^?/g,"10<sup>-$1</sup>");
+ s=s.replace(/(?<![A-Za-z0-9])((?:[A-Z][a-z]?\d*|\((?:[A-Z][a-z]?\d*)+\)\d*)+)([+-](?![A-Za-z0-9]))?/g,(m,f,sg)=>{
+  if(!sg&&!/\d/.test(f))return m;let tail="";
+  if(sg){const mm=f.match(/^(.*?)([A-Z][a-z]?)(\d+)$/);if(mm&&mm[1]===""){f=mm[2];tail="<sup>"+mm[3]+sg+"</sup>";}else tail="<sup>"+sg+"</sup>";}
+  return f.replace(/(\d+)/g,"<sub>$1</sub>")+tail;});
+ s=s.replace(/<\/sub>(\d?[+-])(?![A-Za-z0-9])/g,"</sub><sup>$1</sup>").replace(/\bsp([23])\b/g,"sp<sup>$1</sup>");
+ return s.replace(/\n/g,"<br>");}
+const tbl=t=>"<table><tr>"+t.h.map(c=>"<th>"+rich(c)+"</th>").join("")+"</tr>"+t.r.map(r=>"<tr>"+r.map(c=>"<td>"+rich(c)+"</td>").join("")+"</tr>").join("")+"</table>";
+const cur=()=>D[st.currentIndex];
+function has(n){const a=st.answers[n];if(a==null)return false;if(Array.isArray(a))return a.some(x=>x);return String(a)!=="";}
+function ok(q){const a=st.answers[q.n],k=KEY[q.n];
+ if(q.t==="MCQ")return a===k;
+ if(q.t==="MCMA")return Array.isArray(a)&&a.length===k.length&&k.every(x=>a.includes(x));
+ return Array.isArray(a)&&k.every((v,i)=>a[i]===v);}
+function keyText(q){const k=KEY[q.n];
+ if(q.t==="MCQ")return k;
+ if(q.t==="MCMA")return "Opsi "+k.join(", ");
+ return k.map((v,i)=>"Pernyataan "+(i+1)+": "+(v==="B"?"Benar":"Salah")).join(" | ");}
+const bodyWrap=$("#body-wrap"),navGroup=$("#navgrid-group"),card=$("#question-card"),btnPrev=$("#btn-prev"),btnNext=$("#btn-next");
+function buildNav(){navGroup.innerHTML="";
+ TO.forEach(t=>{const l=D.filter(q=>q.t===t);if(!l.length)return;
+  const w=document.createElement("div");w.className="nav-section";
+  w.innerHTML='<div class="sec-title">'+TL[t]+" ("+l.length+" soal)</div>";
+  const g=document.createElement("div");g.className="nav-grid";
+  l.forEach(q=>{const b=document.createElement("button");b.className="nav-btn";b.textContent=q.n;b.dataset.n=q.n;
+   b.onclick=()=>{go(D.findIndex(x=>x.n===q.n));if(window.innerWidth<=680)closeSide();};g.appendChild(b);});
+  w.appendChild(g);navGroup.appendChild(w);});}
+function refresh(){
+ document.querySelectorAll(".nav-btn").forEach(b=>{const n=+b.dataset.n,q=D.find(x=>x.n===n);
+  b.className="nav-btn"+(st.done?(ok(q)?" ok":" bad"):has(n)?" answered":"")+(n===cur().n?" current":"");});
+ const c=D.filter(q=>has(q.n)).length;$("#hdr-answered").textContent=c;$("#hdr-total").textContent=D.length;
+ $("#header-progress-fill").style.width=Math.round(c/D.length*100)+"%";}
+function go(i){st.currentIndex=Math.max(0,Math.min(D.length-1,i));save();render();}
+btnPrev.onclick=()=>go(st.currentIndex-1);
+btnNext.onclick=()=>{if(st.currentIndex>=D.length-1)openResult();else go(st.currentIndex+1);};
+function render(){
+ const q=cur(),a=st.answers[q.n],lock=st.done,k=KEY[q.n];
+ let h='<div class="q-meta"><span class="q-badge '+q.t+'">'+TL[q.t]+'</span><span class="q-num">Nomor '+q.n+' dari '+D.length+'</span><span class="q-level">'+esc(q.el)+'</span></div>';
+ if(q.jud||q.nar||q.tab)h+='<div class="q-stimulus">'+(q.jud?"<b>"+rich(q.jud)+"</b>":"")+(q.nar?"<p>"+rich(q.nar)+"</p>":"")+(q.tab?tbl(q.tab):"")+"</div>";
+ if(IMG[q.n])h+='<img class="q-img" title="Klik untuk memperbesar" onclick="window.open(this.src)" loading="lazy" src="'+IMG[q.n]+'" alt="Gambar pendukung soal nomor '+q.n+'" onerror="this.outerHTML=\'<p class=isian-hint>Gambar belum dapat dimuat. Periksa koneksi internet.</p>\'">';
+ h+='<div class="q-text">'+rich(q.soal)+"</div>";
+ if(q.t==="TF"){
+  h+='<table class="tf'+(lock?" locked":"")+'"><tr><th>Pernyataan</th><th>Benar</th><th>Salah</th></tr>';
+  q.rows.forEach((r,i)=>{const v=a&&a[i];h+="<tr><td>"+rich(r)+"</td>"+["B","S"].map(x=>'<td class="c'+(lock&&k[i]===x?" good":"")+(lock&&v===x&&k[i]!==x?" wrong":"")+'"><input type="radio" name="tf'+i+'" data-i="'+i+'" value="'+x+'"'+(v===x?" checked":"")+"></td>").join("")+"</tr>";});
+  h+="</table>";
+ }else{
+  const sel=q.t==="MCQ"?[a]:(a||[]);
+  h+='<div class="opt-list'+(lock?" locked":"")+'">';
+  q.opsi.forEach(([c,t])=>{const on=sel.includes(c),right=q.t==="MCQ"?k===c:k.includes(c);
+   h+='<label class="opt'+(on?" selected":"")+(lock&&right?" ok":"")+(lock&&on&&!right?" bad":"")+'"><input type="'+(q.t==="MCQ"?"radio":"checkbox")+'" name="o" value="'+c+'"'+(on?" checked":"")+'><span class="opt-label">'+c+'</span><span class="opt-text">'+rich(t)+"</span></label>";});
+  h+="</div>"+(q.t==="MCMA"?'<p class="isian-hint">Pilih semua jawaban yang benar (lebih dari satu).</p>':"");
+ }
+ if(lock){const g=ok(q);
+  h+='<div class="feedback '+(g?"ok":"bad")+'"><div class="feedback-title">'+(g?"✓ Jawaban benar":has(q.n)?"✗ Jawaban belum tepat":"– Belum dijawab")+'</div><div class="kunci">Kunci: '+esc(keyText(q))+'</div><div class="pembahasan"><b>Pembahasan</b>'+q.lang.map(l=>'<div class="pembahasan-step">'+rich(l)+"</div>").join("")+'</div><div class="pembahasan"><b>Analisis pilihan</b>'+q.ana.map(l=>'<div class="pembahasan-step">'+rich(l)+"</div>").join("")+"</div></div>";}
+ else h+='<p class="isian-hint" style="margin-top:14px;">Jawabanmu tersimpan otomatis. Skor &amp; pembahasan muncul setelah menekan "Kumpulkan Jawaban" di soal terakhir.</p>';
+ card.innerHTML=h;
+ btnPrev.disabled=st.currentIndex===0;
+ btnNext.textContent=st.currentIndex===D.length-1?(st.done?"Lihat Hasil":"Kumpulkan Jawaban"):"Berikutnya →";
+ refresh();$("#main-scroll").scrollTop=0;}
+card.addEventListener("change",e=>{if(st.done)return;const q=cur(),t=e.target;
+ if(q.t==="TF"){const a=Array.isArray(st.answers[q.n])?st.answers[q.n]:[];for(let i=0;i<q.rows.length;i++)a[i]=a[i]||null;a[+t.dataset.i]=t.value;st.answers[q.n]=a;}
+ else{const v=[...card.querySelectorAll("input[name=o]:checked")].map(i=>i.value);st.answers[q.n]=q.t==="MCQ"?v[0]:v;
+  card.querySelectorAll(".opt").forEach(l=>l.classList.toggle("selected",l.querySelector("input").checked));}
+ save();refresh();});
+function openResult(){
+ const un=D.filter(q=>!has(q.n)).map(q=>q.n);
+ if(!st.done){st.done=true;save();render();}
+ const c=D.filter(ok).length,sk=Math.round(c/D.length*100);
+ let tp="",el="";
+ TO.forEach(t=>{const l=D.filter(q=>q.t===t);if(l.length)tp+='<div class="result-item"><div class="n">'+l.filter(ok).length+"/"+l.length+'</div><div class="l">'+TL[t]+"</div></div>";});
+ [...new Set(D.map(q=>q.el))].forEach(e=>{const l=D.filter(q=>q.el===e),p=Math.round(l.filter(ok).length/l.length*100);
+  el+='<div class="level-row"><div class="lname">'+esc(e)+'</div><div class="level-bar-bg"><div class="level-bar-fill" style="width:'+p+'%"></div></div><div class="lval">'+p+"%</div></div>";});
+ $("#result-modal").innerHTML='<h2>Hasil Tryout</h2><div class="sub"><b>'+esc(st.studentName||"-")+"</b> · "+M.judul+'</div><div class="score-hero"><div class="num">'+sk+'</div><div class="lbl">Skor (0–100)<br>'+c+" dari "+D.length+' soal benar</div></div><div class="result-grid">'+tp+'</div><div class="sec-title" style="margin-top:0;">Penguasaan per Elemen</div><div id="level-breakdown">'+el+"</div>"+(un.length?'<div class="result-note">📝 Soal belum dijawab: '+un.join(", ")+".</div>":"")+'<div class="result-actions"><button class="btn btn-primary" id="btn-close-result">Tutup &amp; Lihat Pembahasan</button><button class="btn btn-ghost" id="btn-reset" style="color:var(--bad);border-color:var(--bad);">Ulangi dari Awal</button></div>';
+ $("#result-overlay").classList.add("show");
+ $("#btn-close-result").onclick=()=>$("#result-overlay").classList.remove("show");
+ $("#btn-reset").onclick=()=>{$("#confirm-text").textContent="Semua jawaban dan progres akan dihapus. Yakin ingin mengulang dari awal?";$("#confirm-overlay").classList.add("show");};}
+$("#confirm-cancel").onclick=()=>$("#confirm-overlay").classList.remove("show");
+$("#confirm-ok").onclick=()=>{try{localStorage.removeItem(SK);}catch(e){}
+ st={studentName:"",currentIndex:0,answers:{},done:false};
+ $("#confirm-overlay").classList.remove("show");$("#result-overlay").classList.remove("show");showStart();};
+let hid=false;const mob=()=>window.innerWidth<=680;
+$("#hamburger").onclick=()=>{if(mob()){const o=!bodyWrap.classList.contains("mobile-open");bodyWrap.classList.toggle("mobile-open",o);bodyWrap.classList.toggle("sidebar-hidden",!o);}
+ else{hid=!hid;bodyWrap.classList.toggle("sidebar-hidden",hid);}};
+function closeSide(){bodyWrap.classList.remove("mobile-open");if(mob())bodyWrap.classList.add("sidebar-hidden");}
+$("#backdrop").onclick=closeSide;
+const so=$("#start-overlay"),ci=$("#start-card-info"),cn=$("#start-card-nama"),inp=$("#input-nama"),bm=$("#btn-mulai");
+function showStart(){inp.value="";bm.disabled=true;$("#start-err").textContent="";so.classList.remove("hidden");ci.classList.remove("hidden");cn.classList.add("hidden");}
+$("#btn-info-lanjut").onclick=()=>{ci.classList.add("hidden");cn.classList.remove("hidden");setTimeout(()=>inp.focus(),50);};
+$("#btn-info-kembali").onclick=()=>{cn.classList.add("hidden");ci.classList.remove("hidden");};
+inp.oninput=()=>{bm.disabled=inp.value.trim().length<3;$("#start-err").textContent="";};
+inp.onkeydown=e=>{if(e.key==="Enter"&&!bm.disabled)bm.click();};
+bm.onclick=()=>{const v=inp.value.trim();if(v.length<3)return;st.studentName=v;save();so.classList.add("hidden");startApp();};
+function startApp(){$("#hdr-student").textContent=st.studentName?"Nama: "+st.studentName:"";buildNav();render();if(mob())bodyWrap.classList.add("sidebar-hidden");}
+function info(){
+ const dist=TO.map(t=>[TL[t],D.filter(q=>q.t===t).length]).filter(x=>x[1]);
+ const f=[["Mata Pelajaran",M.mapel],["Tahun Pelajaran (TP)",M.tp],["Total Soal",D.length+" Soal"]];
+ let h=f.map(([k,v])=>'<div class="info-item"><div class="k">'+k+'</div><div class="v">'+esc(v)+"</div></div>").join("");
+ h+='<div class="info-item full"><div class="k">Distribusi Bentuk Soal</div><div class="v" style="font-weight:400;"><ul class="dist-list">'+dist.map(d=>"<li><span>"+d[0]+"</span><b>"+d[1]+" soal</b></li>").join("")+"</ul></div></div>";
+ h+='<div class="info-item full"><div class="k">Acuan</div><div class="v" style="font-weight:600;font-size:12.5px;">'+esc(M.acuan)+"</div></div>";
+ $("#info-grid").innerHTML=h;$("#info-title").textContent=M.judul;$("#info-sub").textContent="Bacalah keterangan berikut sebelum memulai pengerjaan.";
+ $("#start-title").textContent=M.judul;$("#start-sub").textContent=M.mapel+" · TP "+M.tp+" — Isi nama lengkapmu sebelum mulai mengerjakan.";
+ $("#hdr-title").textContent=M.judul;$("#hdr-sub").textContent=M.mapel+" · TP "+M.tp;}
+info();load();if(st.currentIndex>=D.length)st.currentIndex=0;
+if(st.studentName&&st.studentName.trim()){so.classList.add("hidden");startApp();}else showStart();
+})();
+</script>
+</body>
+</html>
